@@ -1,0 +1,610 @@
+\documentclass[11]{article}
+%\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage[pdftex,
+bookmarks,
+bookmarksopen,
+pdfauthor={Mathieu Emily},
+pdftitle={GenePair}]
+{hyperref}
+
+\oddsidemargin -2 mm
+\evensidemargin -2 mm
+\textwidth 170 mm
+\topmargin -2 cm
+\textheight 23.5 cm
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+
+\usepackage{Sweave}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\SweaveOpts{echo=TRUE, eval=FALSE,concordance=TRUE}
+
+\let\proglang=\textsf
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\VAR}{\mathsf{VAR}}
+\newcommand{\COV}{\mathsf{COV}}
+\newcommand{\Prob}{\mathsf{P}}
+%\newcommand{\Plaintitle}[1]{\def\@Plaintitle{#1}}
+
+\begin{document}
+\setkeys{Gin}{width=1.0\textwidth}
+
+%\VignetteIndexEntry{Pairwise interaction tests} 
+%\VignettePackage{GeneGeneInteR}
+
+\title{GeneGeneInteR vignette \\
+Statistical analysis of the interaction between a pair of genes.}
+
+\author{Mathieu Emily and Magalie Hou\'ee-Bigot}
+
+%\date{}
+
+
+
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%\section[Methods]{Statistical methods for testing one pair of gene}
+%\label{Sec:GenePair}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\noindent
+This vignette presents the technical details of the statistical procedure implemented in the package. Readers that would like to have a global overview of the main functions and tools proposed in the package are encouraged to read the vignette {\bf VignetteGeneGeneInteR\_Introduction}. 
+
+\section{Introduction}
+
+\noindent
+In this vignette we consider statistical procedures to test for the interaction between two genes in susceptibility with a binary phenotype, typically a case/control disease status. Let $Y \in \{0,1\}$ be the phenotype, where $Y=0$ stands for a control and $Y=1$ a case, and $X_1$ and $X_2$ be the two genes for which the interaction is tested. 
+
+\vskip1em
+\noindent
+Let consider a sample of $n$ individuals with $n_c$ controls and $n_d$ cases ($n_c+n_d=n$) and $\mathbf{Y}=[y_1,\dots,y_n]^{\prime}$ the vector of the observed binary phenotypes. Each gene is a collection of respectively $m_1$ and $m_2$ SNPs. The observed genotypes for gene $X_1$ can be represented by a $n \times m_1$ matrix:~$\mathbf{X_1}=[x^1_{ij}]_{i \in 1\dots n; j \in 1\dots m_1}$ where $x^1_{ij} \in \{0;1;2\}$ is the number of copies of the minor allele for SNP $j$ carried by individual $i$. A similar representation is used for gene $X_2$ where $\mathbf{X_2}$ is a $n \times m_2$ matrix. Let us further introduce $\mathbf{X_1^c}$ and $\mathbf{X_2^c}$ the matrices of observed genotypes among controls for gene 1 and 2 and $\mathbf{X_1^d}$ and $\mathbf{X_2^d}$ among cases for both genes. Thus $\mathbf{X_1^c}$ is a $n_c \times m_1$ matrix, $\mathbf{X_1^d}$ a $n_d \times m_1$ matrix, $\mathbf{X_2^c}$ a $n_c \times m_2$ matrix and $\mathbf{X_2^d}$ a $n_d \times m_2$ matrix. A general setup of the observed values can be presented as follows:
+
+$$
+\mathbf{Y}
+=
+\begin{bmatrix}
+y_1 \\
+\vdots \\
+y_{n_c} \\
+y_{n_c+1} \\
+\vdots \\
+y_{n_c+n_d} \\
+\end{bmatrix}
+\mathbf{X_1}=
+\begin{bmatrix}
+\\
+\mathbf{X_1^c} \\
+ \\
+ \\
+\mathbf{X_1^d} \\
+ \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+x^1_{11} & \dots & x^1_{1m_1} \\
+\vdots & \ddots & \vdots \\
+x^1_{n_c 1} & \dots & x^1_{n_c m_1} \\
+x^1_{(n_c+1)1} & \dots & x^1_{(n_c+1)m_1} \\
+\vdots & \ddots & \vdots \\
+x^1_{(n_c+n_d) 1} & \dots & x^1_{(n_c+n_d) m_1} \\
+\end{bmatrix}
+%$$
+%$$
+\mathbf{X_2}=
+\begin{bmatrix}
+\\
+\mathbf{X_2^c} \\
+ \\
+ \\
+\mathbf{X_2^d} \\
+ \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+x^2_{11} & \dots & x^2_{1m_2} \\
+\vdots & \ddots & \vdots \\
+x^2_{n_c 1} & \dots & x^2_{n_c m_1} \\
+x^2_{(n_c+1)1} & \dots & x^2_{(n_c+1)m_1} \\
+\vdots & \ddots & \vdots \\
+x^2_{(n_c+n_d) 1} & \dots & x^2_{(n_c+n_d) m_1} \\
+\end{bmatrix}
+$$
+
+\vskip1em
+\noindent
+In our package we proposed 10 methods for testing interaction at the gene level. These 10 methods are all based on three main parameters: \code{Y}, a \code{numeric} or \code{factor} vector with exactly two distinct values, \code{G1} and \code{G2} two \code{SnpMatrix} objects as proposed by the \proglang{R} \pkg{Bioconductor} package \pkg{snpStats}. Our implementation is illustrated by the dataset \code{gene.pair} provided with the \pkg{GeneGeneInteR} package and summarized in the following command lines:
+
+\vskip0.5em
+%\code{R> library(GeneGeneInteR)}
+<<>>=
+library(GeneGeneInteR)
+data(gene.pair)
+head(gene.pair$Y)
+@
+
+\code{[1] HealthControl HealthControl HealthControl HealthControl HealthControl HealthControl}
+
+\code{Levels: HealthControl RheumatoidArthritis}
+
+<<>>==
+gene.pair$G1
+@
+
+\code{A SnpMatrix with  453 rows and  8 columns}
+
+\code{Row names:  Id1 ... Id453}
+
+\code{Col names:  rs1491710 ... rs2298849}
+
+\newpage
+<<>>==
+gene.pair$G2
+@
+
+\code{A SnpMatrix with  453 rows and  4 columns}
+
+\code{Row names:  Id1 ... Id453}
+
+\code{Col names:  rs2057094 ... rs1005753}
+
+\vskip1em
+\noindent
+The 10 methods implemented in our package can be divided into two main families: 6 methods based on a multidimensional modeling of the interaction at the gene level and 4 methods that combine interaction tests at the SNP level into a single test at the gene level.
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+\section{Multidimensional methods at the gene level}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+In the \pkg{GeneGeneInteR} package, 6 multidimensional methods have been implemented that are based on:
+\begin{itemize}
+\item Principal Components Analysis - \code{PCA.test} function,
+\item Canonical Correlation Analysis - \code{CCA.test} function,
+\item  Kernel Canonical Correlation Analysis - \code{KCCA.test} function,
+\item Composite Linkage Disequilibrium - \code{CLD.test} function,
+\item Partial Least Square Path Modeling - \code{PLSPM.test} function,
+\item Gene-Based Information Gain Method - \code{GBIGM.test} function.
+\end{itemize}
+
+In the remainder of this section, technical and practical details are given regarding these 6 methods.
+
+%%%%%%%%%%%%%%%
+\subsection{PCA-based}
+%%%%%%%%%%%%%%%
+
+In the PCA-based method, a likelihood ratio test is performed to compare the model $\mathcal{M}_{Inter}$ to the model $\mathcal{M}_{No}$, where $\mathcal{M}_{Inter}$ is defined by:
+$$
+\mathrm{logit}\left(\mathbb{P}\left[Y=1|PC_{X_1}^1\dots PC_{X_1}^{n_1},PC_{X_2}^1\dots PC_{X_2}^{n_2} \right]\right)=\beta_0+\sum_{i=1}^{n_1} PC_{X_1}^i+\sum_{j=1}^{n_2} PC_{X_2}^j+\sum_{i=1}^{n_1}\sum_{i=2}^{n_2}PC_{X_1}^iPC_{X_2}^j
+$$
+and $\mathcal{M}_{No}$ by:
+$$
+\mathrm{logit}\left(\mathbb{P}\left[Y=1|PC_{X_1}^1\dots PC_{X_1}^{n_1},PC_{X_2}^1\dots PC_{X_2}^{n_2} \right]\right)=\beta_0+\sum_{i=1}^{n_1} PC_{X_1}^i+\sum_{j=1}^{n_2} PC_{X_2}^j
+$$
+
+\vskip1em
+\noindent
+In models $\mathcal{M}_{Inter}$ and $\mathcal{M}_{No}$, $PC_{X_1}^i$ and  $PC_{X_2}^j$ are the $i^{th}$ principal component of $\mathbf{X_1}$ and the $j^{th}$ principal component of $\mathbf{X_2}$. The number of principal components, $n_1$ and $n_2$, kept in the interaction test is determined by the percentage of inertia retrieved by the PCA. Such a percentage is defined by the user and corresponds to the \code{threshold} parameter.
+
+\vskip1em
+\noindent
+In our package, two distinct Principal Component decomposition are provided by the functions \code{PCA.test} via the argument \code{method}. With \code{method="Std"}, dataset is standardized using variables' standard deviation while with \code{method="GenFreq"}, dataset is standardized using standard deviation under Hardy-Weinberg equilibrium, as proposed in the \pkg{snpStats} package.
+
+
+%In the PCA-based method, introduced by \cite{Li:09}, a Principal Component Analysis is first performed on each gene, {\it i.e.} on the two \code{SnpMatrix} objects \code{G1} and \code{G2}. Principal components are retrieved to describe each dataset with user-set inertia percentage. Such a percentage corresponds to the \code{threshold} parameter used in the \code{PCA.Std} and \code{PCA.GeneFreq} functions implemented if the \pkg{GeneGeneInteR} package. In \code{PCA.Std}, dataset is standardized using variables' standard deviation while in \code{PCA.GenFreq}, dataset is standardized using standard deviation under Hardy-Weinberg equilibrium, as proposed in the \pkg{snpStats} package. Principal components are then used in a logit model fitting process in which interaction is tested. 
+
+\vskip1em
+\noindent
+When the percentage of inertia asked by the user is high, the number of PCs can be important and fitting logistic models $\mathcal{M}_{Inter}$ and $\mathcal{M}_{No}$ is likely to fail. In that case, the number of PCs in each gene is iteratively reduced until convergence of the \code{glm} function for fitting models $\mathcal{M}_{Inter}$ and $\mathcal{M}_{No}$.
+
+\newpage
+%\vskip1em
+\noindent
+The following lines provide an example of the \code{PCA.test} function:
+
+<<>>==
+PCA.test(Y=gene.pair$Y, G1=gene.pair$G1, G2=gene.pair$G2,threshold=0.7,
+method="GenFreq")
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Principal Component Analysis}
+
+\code{Deviance = 8.215662, df = 6, p-value = 0.2227253}
+
+<<>>==
+PCA.test(Y=gene.pair$Y, G1=gene.pair$G1, G2=gene.pair$G2,threshold=0.7, 
+method="Std")
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Principal Component Analysis}
+
+\code{Deviance = 8.507404, df = 6, p-value = 0.2032347}
+
+%%%%%%%%%%%%%%%
+\subsection{Canonical Correlation Analysis (CCA)}
+%%%%%%%%%%%%%%%
+
+The CCA test is based on a Wald-type statistic defined as follows (see \cite{Peng:10} for details):
+
+$$
+U_{CCA}=\frac{z_d-z_c}{\sqrt{\mathbb{V}(z_d)+\mathbb{V}(z_c)}}
+$$
+
+\noindent
+where $z_d=\frac{1}{2}\left(\log(1+r_d)-\log(1-r_d) \right)$ and $z_c=\frac{1}{2}\left(\log(1+r_c)-\log(1-r_c) \right)$ with $r_d$ the maximum canonical correlation coefficient between $\mathbf{X_1^d}$ and $\mathbf{X_2^d}$ and $r_c$ the maximum canonical correlation coefficient between $\mathbf{X_1^c}$ and $\mathbf{X_2^c}$ computed for controls ($Y=0$). As suggested by \cite{Peng:10}, the sampled variances $\mathbb{V}(z_d)$ and $\mathbb{V}(z_c)$ were evaluated by applying a bootstrapping method. The number of bootstrap sample used to estimate $\mathbb{V}(z_d)$ and $\mathbb{V}(z_c)$ is determined by the \code{n.boot} argument.
+P-value is then obtained by noting that under the null hypothesis $U_{CCA} \sim \mathcal{N}(0,1)$. 
+
+\vskip1em
+\noindent
+CCA based gene-gene interaction is implemented in the \code{CCA.test} function and mainly depends on the \code{cancor} function from the \pkg{Stats} package \cite{R:16}.
+
+\vskip0.5em
+\code{R> set.seed(1234)}
+
+<<>>==
+CCA.test(Y=gene.pair$Y, G1=gene.pair$G1, G2=gene.pair$G2,n.boot=500)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null\hskip2cm 	 Canonical Correlation Analysis }
+
+\code{CCU = 0.6030414, p-value = 0.5464811}
+
+%%%%%%%%%%%%%%%
+\subsection{Kernel Canonical Correlation Analysis (KCCA)}
+%%%%%%%%%%%%%%%
+
+The KCCA based test provides a generalization of CCA test to detect non-linear co-association between $\mathbf{X_1}$ and $\mathbf{X_2}$ \cite{Yuan:12,Larson:13} and is based on the following Wald-type statistic:
+$$
+U_{KCCA}=\frac{kz_d-kz_c}{\sqrt{\mathbb{V}(kz_d)+\mathbb{V}(kz_c)}}
+$$
+
+
+\noindent
+where $kz_d=\frac{1}{2}\left(\log(1+kr_d)-\log(1-kr_d) \right)$ and $kz_c=\frac{1}{2}\left(\log(1+kr_c)-\log(1-kr_c) \right)$ with $kr_d$ the maximum kernel canonical correlation coefficient between $\mathbf{X_1^d}$ and $\mathbf{X_2^d}$ and $kr_c$ the maximum kernel canonical correlation coefficient between $\mathbf{X_1^c}$ and $\mathbf{X_2^c}$. 
+
+\vskip1em
+\noindent
+Similar to the CCA test, $\mathbb{V}(kz_d)$ and $\mathbb{V}(kz_c)$ are estimated using bootstrap techniques \cite{Yuan:12,Larson:13} and the p-value is obtained using the standard gaussian distribution of $U_{KCCA}$ under the null hypothesis. Since the performance of kernel methods strongly relates to the choice of kernel functions, the default is the Radial Basis kernel Function (RBF) owing to its flexibility in parameter specification. However, other kernel functions, such as linear, polynomial or spline kernels, can be used. Thus, in addition to the three arguments \code{Y}, \code{G1} and \code{G2}, our implementation of the KCCA test proposes two optional arguments: \code{n.boot} that determines the number of bootstrap samples and \code{kernel} that provides the kernel function to be used. This \code{kernel} parameter is character string matching one of the kernel name provided by the \pkg{kernlab} package \cite{Karatzoglou:04} such as "rbfdot", "polydot", "tanhdot", "vanilladot", "laplacedot", "besseldot", "anovadot", "splinedot". Specific arguments, \code{sigma}, \code{degree}, \code{scale}, \code{offset}and \code{order}, can also be passed to the \code{kcca.test} function in order to parameterized the kernel used in the analysis.
+
+\vskip1em
+\noindent
+KCCA based gene-gene interaction test is implemented in the \code{KCCA.test} function and mainly depends on the \code{kcca} function from the \pkg{kernlab} package \cite{Karatzoglou:04}.
+
+<<>>==
+set.seed(1234)
+KCCA.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,
+kernel="rbfdot",sigma = 0.05,n.boot=500)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Kernel Canonical Correlation Analysis}
+
+\code{KCCU = 1.407369, p-value = 0.1593179
+}
+
+<<>>==
+set.seed(1234)
+KCCA.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,
+kernel="polydot",degree = 1, scale = 1, offset = 1)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Kernel Canonical Correlation Analysis}
+
+\code{KCCU = -1.413508, p-value = 0.1575063}
+
+%%%%%%%%%%%%%%%
+\subsection{Partial Least Square Path Modeling (PLSPM)}
+%%%%%%%%%%%%%%%
+
+The PLSPM testing has been introduced by \cite{Zhang:13} and is based on the Wald-like statistic:
+$$
+U_{PLSPM}=\frac{\beta_d-\beta_c}{\sqrt{\mathbb{V}(\beta_d-\beta_c)}}
+$$
+
+\noindent
+where $\beta_d$ (resp. $\beta_c$) is the path coefficient between $\mathbf{X_1^d}$ and $\mathbf{X_2^d}$ (resp. $\mathbf{X_1^c}$ and $\mathbf{X_2^c}$). As quoted by \cite{Zhang:13}, the distribution of $U_{PLSPM}$ is unknown and significance can be tested with bootstrapping method.
+
+\vskip1em
+\noindent
+PLSPM based gene-gene interaction test is implemented in the \code{PLSPM.test} function and mainly depends on the \code{plspm} function from the \pkg{plspm} package \cite{Sanchez:15}.
+
+<<>>==
+set.seed(1234)
+PLSPM.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,n.perm=1000)
+@
+
+\vskip0.5em
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Partial Least Squares Path Modeling}
+
+\code{U = 4.093781, p-value = 0.18}
+
+%%%%%%%%%%%%%%%
+\subsection{Composite Linkage Disequilibrium (CLD)}
+%%%%%%%%%%%%%%%
+
+The CLD method, proposed in \cite{Rajapakse:12} is based on the normalized quadratic distance (NQD) and is defined as 
+$$
+\delta^2=\mathrm{tr.}\Big((\tilde{D}-\tilde{C})W^{-1}(\tilde{D}-\tilde{C})W^{-1} \Big)
+$$
+
+\noindent
+where $\tilde{D}$, $\tilde{C}$ and $W$ are three $(m_1+m_2) \times (m_1+m_2)$ matrices of the covariance between the whole set of SNPs that combines SNPs from both genes. More precisely, $\tilde{D}$ and $\tilde{C}$ are defined as follows:
+$$
+\tilde{D}=
+\begin{bmatrix}
+W_{11} & D_{12} \\
+D_{21} & W_{22} \\
+\end{bmatrix}
+\;\;\;\;\;\;\;\;\;
+\tilde{C}=
+\begin{bmatrix}
+W_{11} & C_{12} \\
+C_{21} & W_{22} \\
+\end{bmatrix}
+$$
+
+\noindent
+where $W_{11}$ (resp. $W_{22}$) is the pooled estimate of the
+covariance matrix for $\mathbf{X_1}$ (resp. $\mathbf{X_2}$, $D_{12}(=D_{21}^{\prime})$ and $C_{12}(=C_{21}^{\prime})$ are the sample covariance matrix between the two genes estimated from $\left(\mathbf{X_1^d},\mathbf{X_2^d}\right)$ and $\left(\mathbf{X_1^c},\mathbf{X_2^c}\right)$ respectively. In more details, the sample covariance matrices in cases, denoted by $D$, and in controls, denoted by $C$, can be partitioned in 4 blocks as follows:
+$$
+D=\mathrm{Cov}\left(\mathbf{X_1^d},\mathbf{X_2^d}\right)=
+\begin{bmatrix}
+D_{11} & D_{12} \\
+D_{21} & D_{22} \\
+\end{bmatrix}
+\;\;\;\;\;\;\;\;
+C=\mathrm{Cov}\left(\mathbf{X_1^c},\mathbf{X_2^c}\right)=
+\begin{bmatrix}
+C_{11} & C_{12} \\
+C_{21} & C_{22} \\
+\end{bmatrix}
+$$
+
+\noindent
+The pooled estimate of the covariance matrix, $W$, can thus been obtained by:
+$$
+W=\frac{n_c C +n_d D}{n_c+n_d}=
+\begin{bmatrix}
+W_{11} & W_{12} \\
+W_{21} & W_{22} \\
+\end{bmatrix}
+$$
+
+\noindent
+Since the distribution of $\delta^2$ is not known under the null hypothesis, significance testing is performed using permutation tests, as proposed by \cite{Rajapakse:12}. Such a test has been implemented in our package in the \code{CLD.test} function where the number of permutations is determined by the argument \code{n.perm}.
+
+<<>>==
+set.seed(1234)
+CLD.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,n.perm=2000)
+@
+
+\vskip0.5em
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Composite Linkage Disequilibrium}
+
+\code{CLD = 0.4925654, p-value = 0.8865}
+
+
+%%%%%%%%%%%%%%%
+\subsection{Gene-Based Information Gain Method (GBIGM)}
+%%%%%%%%%%%%%%%
+
+Introduced by \cite{Li:15}, the GBIGM method is based on the information gain rate $\Delta R_{1,2}$. $\Delta R_{1,2}$ is defined as follows:
+$$
+\Delta R_{1,2}=\frac{\min(H_1,H_2)-H_{1,2}}{\min(H_1,H_2)}
+$$
+where $H_1$, $H_2$, $H_{1,2}$ are the conditional entropies, given the $\mathbf{Y}$, of $\mathbf{X_1}$, $\mathbf{X_2}$ and the pooled SNP set $(\mathbf{X_1},\mathbf{X_2})$ respectively. Assuming that $H(.)$ is the classical entropy function, we have:
+\begin{eqnarray*}
+H_1&=&H(\mathbf{Y},\mathbf{X_1})-H(\mathbf{X_1})\\
+H_2&=&H(\mathbf{Y},\mathbf{X_2})-H(\mathbf{X_2})\\
+H_{1,2}&=&H(\mathbf{Y},\mathbf{X_1},\mathbf{X_2})-H(\mathbf{X_1},\mathbf{X_2})\\
+\end{eqnarray*}
+
+\noindent
+Since the distribution of $\Delta R_{1,2}$ is unknown, the significance testing is performed by permutations as suggested by \cite{Li:15}. The GBIGM method has been implemented in the \code{GBIGM.test} function and the number of permutations is defined by the argument \code{n.perm}.
+
+<<>>==
+set.seed(1234)
+GBIGM.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,n.perm=2000)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Gene-based Information Gain Method}
+
+\code{DeltaR1,2 = 0.4644093, p-value = 0.441}
+
+%%%%%%%%%%%%%%%
+\section{From SNP-SNP interaction to Gene-Gene interaction testing}
+%%%%%%%%%%%%%%%
+
+This section provides details of the four statistical methods that proposes a gene-based test from SNP-based tests \cite{Emily:16}. Rather than considering multiple SNPs in both gene as part of a joint model, these methods aim at aggregating p-values obtained at the SNP level into a single p-value at a gene level.
+
+\paragraph{Interaction testing at the SNP level}\
+
+
+\noindent
+Let consider a pair of SNPs, $(X_{1,j},X_{2,k})$ where $X_{1,j}$ is the $j^{\textmd{th}}$ SNP  of gene $X_1$ and $X_{2,k}$ the $k^{\textmd{th}}$ SNP  of gene $X_2$ ($1 \leq j \leq m_1$ and $1 \leq k \leq m_2$). To test for interaction at the SNP level, we used the following Wald statistic:
+$$
+W_{jk}=\frac{\widehat{\beta_3^{j,k}}}{\widehat{\sigma \left(\widehat{\beta_3^{j,k}}\right)}}
+$$
+where $\widehat{\beta_3^{j,k}}$ is an estimate of the interaction coefficient  $\beta_3^{j,k}$ of the following logistic model:
+$$
+\log\left( \frac{\mathbb{P}[Y=1|X_{1,j}=x_1,X_{2,k}=x_2]}{1-\mathbb{P}[Y=1|X_{1,j}=x_1,X_{2,k}=x_2]}\right) = \beta_0^{j,k}+\beta_1^{j,k}x_1+\beta_2^{j,k} x_2 +\beta_3^{j,k} x_1x_2
+$$
+
+\noindent
+$\widehat{\beta_3^{j,k}}$ is obtained  by maximizing the likelihood function on the observed data $\mathbf{Y}$, $\mathbf{X_1}$ and $\mathbf{X_2}$ while $\widehat{\sigma \left(\widehat{\beta_3^{j,k}} \right)}$ is calculating by inverting the Hessian of the likelihood. Since the solution of the maximization of the likelihood function does not have a closed form, we compute $W_{jk}$ according to the iteratively reweighted least squares algorithm proposed in the \code{glm} function of the \pkg{stats} package \cite{R:16} .
+
+\vskip1em
+\noindent
+To combine the statistics $W_{jk}$ into a single test, \cite{Ma:13} proposed four methods that all account for covariance matrix $\Sigma=[\sigma_{(j,k),(j^{\prime},k^{\prime})}]_{\substack{j=1\dots m_1; k=1\dots m_2 \\j^{\prime}=1\dots m_1;k^{\prime}=1\dots m_2}}$, a $(m_1 \times m_2) \times (m_1 \times m_2)$ symmetric matrix where $\sigma_{(j,k),(j^{\prime},k^{\prime})}=Cov(W_{jk},W_{j^{\prime},k^{\prime}})$. As proposed by \cite{Emily:16}, the covariance between $W_{jk}$ and $W_{j^{\prime},k^{\prime}}$ is estimated by:
+$$
+\widehat{\sigma_{(j,k),(j^{\prime},k^{\prime})}}= r_{j,j^{\prime}} r_{k,k^{\prime}}
+$$
+where $r_{j,j^{\prime}}=\frac{p_{j j^{\prime}}-p_j p_{j^{\prime}}}{\sqrt{p_j(1-p_j)p_{j^{\prime}}(1-p_{j^{\prime}})}}$ is the widely used correlation measure between SNP $j$ and SNP $j^{\prime}$, given that $p_j$ and $p_{j^\prime}$ are the respective allelic frequencies and $p_{jj^{\prime}}$ is the joint allelic frequency \cite{Hill:68}.
+
+
+\vskip2em
+\noindent
+In the remainder of this section, the four methods: minP (function \code{minP.test}, GATES (function \code{gates.test}), tTS (function \code{tTS.test}) and tProd (function \code{tProd.test}) are detailed.
+
+%%%%%%%%%%%%%%%
+\subsection{minP}\
+%%%%%%%%%%%%%%%
+
+\noindent
+The minP test is based on the minimum p-value that is often used to combine p-values of association (see \cite{Conneely:07}). Let $W_{\max}=\max{|W_{11}|,\dots,|W_{m_1,m_2}|}$ be the maximum of the absolute observed statistics. The minP is then defined by:
+\begin{equation}
+\textmd{minP}=1-\mathbb{P}\Big[\max(|Z_1|,|Z_2|,\dots,|Z_{m_1m_2}|) < W_{\max}\Big].
+\label{Eq:pval}
+\end{equation}
+where $\mathbb{Z}=(Z_1,Z_2,\dots,Z_{m_1m_2})$ is a random vector that follows a multivariate normal distribution $\mathbb{Z} \sim \mathcal{N}(\mathbf{0},\Sigma)$.
+
+\vskip1em
+\noindent
+The computation of Equation~\eqref{Eq:pval} requires the calculation of the probability distribution of a multivariate normal random variable. For that purpose, we used the {\tt pmvnorm} function from the R package {\tt mvtnorm} \cite{Genz:09}. 
+
+<<>>==
+set.seed(1234)
+minP.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 minP}
+
+\code{minP = 0.009924148, p-value = 0.1795672}
+
+
+%%%%%%%%%%%%%%%
+\subsection{GATES}\
+%%%%%%%%%%%%%%%
+
+\noindent
+The GATES procedure, proposed by \cite{Li:11}, is an extension of the Simes procedure used to assess the gene level association significance. Let $p_{(1)}, \dots, p_{(m_1m_2)}$ be the ascending SNP-SNP interaction $m_1 \times m_2$ p-values, GATES p-value is then defined by
+$$
+\textmd{p}_{GATES}=\min\left( \frac{me p_{(1)}}{me_{(1)}},\frac{me p_{(2)}}{me_{(2)}},\dots,\frac{me p_{(m_1m_2)}}{me_{(m_1m_2)}} \right)
+$$
+where $m_e$ is the number of effective tests among the $m_1 \times m_2$ tests and $me_(i)$ the number of effective tests among the $i$ most significative tests associated with the lowest order p-values $p_{(1)}, \dots, p_{(i)}$. The number of effective tests ought to characterize the number of independent tests equivalent to the correlated tests that are really performed and is often used to account for dependence in a multiple testing correction.
+
+\vskip1em
+\noindent
+Although no formal definition of the number of effective tests has been formulated in the literature, several procedures have been proposed to estimate such number. All methods are based on a transformation of the set of eigenvalues of the SNP covariance matrix assuming that (1) if the SNPs are independent, the number of effective tests is the number of performed, (2) if the absolute value of the correlation between any pair of SNPs is equal to $1$, the number of effective tests is $1$. In the \pkg{GeneGeneInteR} package, four main methods have been implemented and can be chosen by the user with the argument \code{merest}: Cheverud-Nyholt method - \code{me.est="ChevNy"} \cite{Cheverud:01,Nyholt:04}, Keff method -\code{me.est="Keff"} \cite{Moskvina:08}, Li and Ji method - \code{me.est="LiJi"} \cite{Li:05} and Galwey - \code{me.est="Galwey"} \cite{Galwey:09}.
+
+<<>>==
+set.seed(1234)
+gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,me.est="ChevNy")
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 GATES}
+
+\code{GATES = 0.009924148, p-value = 0.293932
+}
+
+<<>>==
+set.seed(1234)
+gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,alpha=0.05,me.est="Keff")
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 GATES }
+
+\code{GATES = 0.01394543, p-value = 0.1899414
+}
+
+<<>>==
+set.seed(1234)
+gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,me.est="LiJi")
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 GATES}
+
+\code{GATES = 0.01394543, p-value = 0.1255088
+}
+
+<<>>==
+set.seed(1234)
+gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,me.est="Galwey")
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 GATES}
+
+\code{GATES = 0.01394543, p-value = 0.1596024
+}
+
+\newpage
+\subsection{tTS and tProd}\
+
+\noindent
+tTS and tProd procedures are two truncated tail strength methods that aim at combining signals from all single-SNP p-values less than a predefined cutoff value \cite{Jiang:11}. Denoting by $\tau$ the cutoff value, the two truncated p-values are defined as follows \cite{Zaykin:02}:
+\begin{eqnarray*}
+tTS&=&\frac{1}{m_1m_2} \sum_{i=1}^{m_1m_2} \mathbb{I}(p_{(i)} < \tau) \left(1-p_{(i)}\frac{m_1m_2+1}{i} \right)\\
+tProd&=&\prod_{i=1}^{m_1m_2} p_{i}^{\mathbb{I}(p_i < \tau)}
+\end{eqnarray*}
+
+\noindent where $\mathbb{I}$ is the indicator function.
+
+\vskip1em
+\noindent
+When p-values are correlated, the null distribution of $tTS$ and $tProd$ are unknown. Following the approach proposed by \cite{Zaykin:02}, a p-value is obtained in the \pkg{GeneGeneInteR} package by computing an empirical null distribution using Monte-Carlo (MC) simulations. For  each MC iteration, an empirical value for $tTS$ (or $tProd$) is obtained by simulating a vector of $W_{jk}$ with respect to a multivariate normal distribution with a vector of $0$ means and $\widehat{\Sigma}$ as covariance matrix. The empirical p-value is calculated as the proportion of simulated statistics larger than the observed statistic on the ``true" set of $W_{jk}$. 
+
+\vskip1em
+\noindent
+tTS and tProd methods have been implemented in the functions \code{tTS.test} and \code{tProd.test} of the \pkg{GeneGeneInteR} package. Additional to the mandatory \code{Y}, \code{$G_1$} and \code{$G_2$} arguments, these two functions have two optional arguments: \code{tau} and \code{n.sim} that control the cutoff value and the number of simulations used to estimate the empirical value respectively. The following coding lines give an example of the \code{tTS.test} and \code{tProd.test}:
+
+<<>>==
+set.seed(1234)
+tTS.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,tau=0.5,n.sim=10000)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2cm 	 Truncated Tail Strength}
+
+\code{tTS = -0.009912706, p-value = 0.5104
+}
+
+<<>>==
+set.seed(1234)
+tProd.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,tau=0.05,n.sim=1000)
+@
+
+\code{Gene-Gene Interaction method performed with:}
+
+\code{\null \hskip2em 	 Truncated Product}
+
+\code{tProd = 3.69877e-12, p-value = 0.485}
+
+
+\bibliographystyle{apalike}
+\bibliography{Biblio}
+
+\end{document}

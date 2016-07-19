@@ -1,0 +1,27 @@
+export(CCA.test,CLD.test,GBIGM.test,GGI,importFile,KCCA.test,PCA.test,PLSPM.test,gates.test,imputeSnpMatrix)
+export(minP.test,selectSnps,snpMatrixScour,tProd.test,tTS.test,print.GGItest,summary.GGItest,summary.GGInetwork,plot.GGInetwork)
+
+
+importFrom(rioja,chclust)
+importFrom(GenomicRanges,GRanges)
+importFrom(IRanges,IRanges)
+importFrom(kernlab,rbfdot,kcca,polydot,tanhdot,vanilladot,laplacedot,besseldot,anovadot,splinedot)
+importFrom(snpStats,read.pedfile,read.plink,read.impute,ld,col.summary,snp.pre.multiply,snp.post.multiply,impute.snps,snp.imputation)
+importFrom(Rsamtools,TabixFile)
+importFrom(FactoMineR,PCA)
+importFrom(GGtools,vcf2sm)
+importFrom(data.table,tstrsplit)
+importFrom(stats,pnorm,cov,hclust,as.dist,pchisq,qnorm,integrate,glm,anova,as.formula,quantile,var,cutree,cancor,p.adjust)
+importFrom(utils,combn,read.csv,txtProgressBar,setTxtProgressBar,capture.output)
+importFrom(grDevices,recordPlot,replayPlot)
+importFrom(graphics,locator,rect,legend,segments,text,strwidth,plot,par,strheight)
+
+importFrom(igraph,graph_from_data_frame)
+importFrom(mvtnorm,rmvnorm,pmvnorm)
+importFrom(plspm,plspm)
+
+S3method(print, GGItest)
+S3method(summary, GGItest)
+S3method(summary, GGInetwork)
+S3method(plot, GGInetwork)
+
