@@ -1,29 +1,16 @@
 Package: GeneGeneInteR
 Type: Package
 Title: Tools for Testing Gene-Gene Interaction at the Gene Level
-Version: 0.99.0
-Authors@R: c( person("Emily", "Mathieu", email =
-        "mathieu.emily@agrocampus-ouest.fr", role = c("aut","cre")),
-        person("Hou\'ee-Bigot", "Magalie", email =
-        "magalie.houee@agrocampus-ouest.fr", role = "aut"),
-        person("Kroell", "Florian", email =
-        "fkroell@agrocampus-ouest.fr", role = "aut"), person("Sounac",
-        "Nicolas", email = "nsounac@agrocampus-ouest.fr", role =
-        "aut"))
-Description: The aim of this package is to propose several methods for
-        testing gene-gene interaction in case-control association
-        studies. Such a test can be done by aggregating SNP-SNP
-        interaction tests performed at the SNP level (SSI) or by using
-        gene-gene multidimensionnal methods (GGI) methods. The package
-        also proposes tools for a graphic display of the results.
+Version: 0.99.1
+Authors@R: c(
+    person("Emily", "Mathieu", email = "mathieu.emily@agrocampus-ouest.fr", role = c("aut","cre")),
+    person("Hou\'ee-Bigot", "Magalie", email = "magalie.houee@agrocampus-ouest.fr", role = "aut"),
+    person("Kroell", "Florian", email = "fkroell@agrocampus-ouest.fr", role = "aut"),
+    person("Sounac", "Nicolas", email = "nsounac@agrocampus-ouest.fr", role = "aut"))
+Description: The aim of this package is to propose several methods for testing gene-gene interaction in case-control association studies. Such a test can be done by aggregating SNP-SNP interaction tests performed at the SNP level (SSI) or by using gene-gene multidimensionnal methods (GGI) methods. The package also proposes tools for a graphic display of the results.
 License: GPL (>= 2)
 LazyData: TRUE
 Depends: R (>= 3.3)
 biocViews: GenomeWideAssociation, SNP, Genetics, GeneticVariability
-Imports: snpStats, mvtnorm, GGtools, Rsamtools, igraph, kernlab,
-        FactoMineR, plspm, IRanges, GenomicRanges,
-        data.table,rioja,grDevices, graphics,stats,utils
-NeedsCompilation: no
-Author: Emily Mathieu [aut, cre], Hou'ee-Bigot Magalie [aut], Kroell
-        Florian [aut], Sounac Nicolas [aut]
-Maintainer: Emily Mathieu <mathieu.emily@agrocampus-ouest.fr>
+Imports: snpStats, mvtnorm, GGtools, Rsamtools, igraph, kernlab, FactoMineR, plspm, IRanges, GenomicRanges,
+    data.table,rioja,grDevices, graphics,stats,utils

@@ -114,10 +114,10 @@ posi <- system.file("extdata/example.txt", package="GeneGeneInteR")
 data.imported <- importFile(file=ped, snps=info, pos=posi, pos.sep="\\t")
 ## Filtering of the data: SNPs with MAF < 0.05 or p.value for HWE < 1e-3 or SNPs with 
 ## call.rate < 0.9 are removed. 
-data.scour <- snpMatrixScour(snpX=dta$snpX,genes.info=dta$genes.info,min.maf=0.05,
+data.scour <- snpMatrixScour(snpX=data.imported$snpX,genes.info=data.imported$genes.info,min.maf=0.05,
                               min.eq=1e-3,call.rate=0.9)
 ## Imputation of the missing genotypes
-data.imputed <- imputeSnpMatrix(dta$snpX, genes.info = dta$genes.info)
+data.imputed <- imputeSnpMatrix(data.scour$snpX, genes.info = data.scour$genes.info)
 }
 ## Equivalent loading of the genotypes
 load(system.file("extdata/dataImputed.Rdata", package="GeneGeneInteR"))
@@ -128,7 +128,7 @@ Y  <- read.csv(resp, header=FALSE)
 
 ## estimation of the interaction between the 17 genes with the CLD method -- can take a few minutes
 \dontrun{
-GGI.res <- GGI(Y=Y, snpX=dta$snpX, genes.info=dta$genes.info,method="CLD")
+GGI.res <- GGI(Y=Y, snpX=data.imputed$snpX, genes.info=data.imputed$genes.info,method="CLD")
 }
 
 ## estimation of the interaction between 12 among the 17 genes with the default PCA method 
