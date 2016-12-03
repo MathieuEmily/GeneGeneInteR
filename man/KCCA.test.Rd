@@ -32,12 +32,16 @@ Must have a number of rows equal to the length of \code{Y}.}
 \item{order}{The order of the Bessel function to be used as a kernel (\code{kernel="besseldot"}). Default is \code{order=1}.} 
 }
 \value{
-A list with class \code{"GGItest"} containing the following components:
+A list with class \code{"htest"} containing the following components:
 
-	\item{statistic}{The value of the statistic KCCU}
-	\item{p.value}{The p-value for the test}
-	\item{method}{The method used to perform the Gene-Gene interaction test}
-	\item{parameter}{A list of the parameters used to perform the Gene-Gene Interaction test}
+	\item{statistic}{The value of the statistic KCCU.}
+	\item{p.value}{The p-value for the test.}
+	\item{estimate}{A vector of the Fisher's transformed maximum kernel canonical correlation coefficient in cases and controls.}
+	\item{parameter}{The number of boostrap samples used to estimate the p-value.}
+	\item{null.value}{The value of KCCU under the null hypothesis.}
+	\item{alternative}{a character string describing the alternative.}
+	\item{method}{a character string indicating the method used.}
+	\item{data.name}{a character string giving the names of the data.}	
 }
 \description{
 \code{KCCA.test} performs a Gene-Gene Interaction (GGI) analysis based on the

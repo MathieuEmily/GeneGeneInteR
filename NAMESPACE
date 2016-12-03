@@ -1,5 +1,5 @@
 export(CCA.test,CLD.test,GBIGM.test,GGI,importFile,KCCA.test,PCA.test,PLSPM.test,gates.test,imputeSnpMatrix)
-export(minP.test,selectSnps,snpMatrixScour,tProd.test,tTS.test,print.GGItest,summary.GGItest,summary.GGInetwork,plot.GGInetwork)
+export(minP.test,selectSnps,snpMatrixScour,tProd.test,tTS.test)
 
 
 importFrom(rioja,chclust)
@@ -20,8 +20,6 @@ importFrom(igraph,graph_from_data_frame)
 importFrom(mvtnorm,rmvnorm,pmvnorm)
 importFrom(plspm,plspm)
 
-S3method(print, GGItest)
-S3method(summary, GGItest)
 S3method(summary, GGInetwork)
 S3method(plot, GGInetwork)
 

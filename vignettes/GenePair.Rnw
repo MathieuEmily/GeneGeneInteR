@@ -125,35 +125,51 @@ In our package we proposed 10 methods for testing interaction at the gene level.
 \vskip0.5em
 %\code{R> library(GeneGeneInteR)}
 <<>>=
-library(GeneGeneInteR)
-data(gene.pair)
+library("GeneGeneInteR")
+data("gene.pair")
 head(gene.pair$Y)
 @
 
-\code{[1] HealthControl HealthControl HealthControl HealthControl HealthControl HealthControl}
+\begin{Soutput}
+[1] HealthControl HealthControl HealthControl HealthControl HealthControl 
+Levels: HealthControl RheumatoidArthritis
+\end{Soutput}
 
-\code{Levels: HealthControl RheumatoidArthritis}
+%\code{[1] HealthControl HealthControl HealthControl HealthControl HealthControl HealthControl}
+
+%\code{Levels: HealthControl RheumatoidArthritis}
 
 <<>>==
 gene.pair$G1
 @
 
-\code{A SnpMatrix with  453 rows and  8 columns}
+\begin{Soutput}
+A SnpMatrix with  453 rows and  8 columns
+Row names:  Id1 ... Id453
+Col names:  rs1491710 ... rs2298849
+\end{Soutput}
 
-\code{Row names:  Id1 ... Id453}
+%\code{A SnpMatrix with  453 rows and  8 columns}
+%
+%\code{Row names:  Id1 ... Id453}
+%
+%\code{Col names:  rs1491710 ... rs2298849}
 
-\code{Col names:  rs1491710 ... rs2298849}
-
-\newpage
 <<>>==
 gene.pair$G2
 @
 
-\code{A SnpMatrix with  453 rows and  4 columns}
+\begin{Soutput}
+A SnpMatrix with  453 rows and  4 columns
+Row names:  Id1 ... Id453
+Col names:  rs2057094 ... rs1005753
+\end{Soutput}
 
-\code{Row names:  Id1 ... Id453}
-
-\code{Col names:  rs2057094 ... rs1005753}
+%\code{A SnpMatrix with  453 rows and  4 columns}
+%
+%\code{Row names:  Id1 ... Id453}
+%
+%\code{Col names:  rs2057094 ... rs1005753}
 
 \vskip1em
 \noindent
@@ -215,22 +231,47 @@ PCA.test(Y=gene.pair$Y, G1=gene.pair$G1, G2=gene.pair$G2,threshold=0.7,
 method="GenFreq")
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Principal Component Analysis}
+	Gene-based interaction based on Principal Component Analysis - GenFreq
 
-\code{Deviance = 8.215662, df = 6, p-value = 0.2227253}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+Deviance = 8.2157, df = 6.0, threshold = 0.7, p-value = 0.2227
+alternative hypothesis: true deviance is greater than 0
+sample estimates:
+Deviance without interaction    Deviance with interaction 
+                    615.2977                     607.0821 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Principal Component Analysis}
+%
+%\code{Deviance = 8.215662, df = 6, p-value = 0.2227253}
 
 <<>>==
 PCA.test(Y=gene.pair$Y, G1=gene.pair$G1, G2=gene.pair$G2,threshold=0.7, 
 method="Std")
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Principal Component Analysis}
+	Gene-based interaction based on Principal Component Analysis - Std
 
-\code{Deviance = 8.507404, df = 6, p-value = 0.2032347}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+Deviance = 8.5074, df = 6.0, threshold = 0.7, p-value = 0.2032
+alternative hypothesis: true deviance is greater than 0
+sample estimates:
+Deviance without interaction    Deviance with interaction 
+                    615.0911                     606.5837 
+
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Principal Component Analysis}
+%
+%\code{Deviance = 8.507404, df = 6, p-value = 0.2032347}
 
 %%%%%%%%%%%%%%%
 \subsection{Canonical Correlation Analysis (CCA)}
@@ -257,11 +298,24 @@ CCA based gene-gene interaction is implemented in the \code{CCA.test} function a
 CCA.test(Y=gene.pair$Y, G1=gene.pair$G1, G2=gene.pair$G2,n.boot=500)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null\hskip2cm 	 Canonical Correlation Analysis }
+	Gene-based interaction based on Canonical Correspondance Analysis
 
-\code{CCU = 0.6030414, p-value = 0.5464811}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+CCU = 0.60304, n.boot = 500, p-value = 0.5465
+alternative hypothesis: true CCU is not equal to 0
+sample estimates:
+       z0        z1 
+0.2940799 0.2414700 
+
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null\hskip2cm 	 Canonical Correlation Analysis }
+%
+%\code{CCU = 0.6030414, p-value = 0.5464811}
 
 %%%%%%%%%%%%%%%
 \subsection{Kernel Canonical Correlation Analysis (KCCA)}
@@ -290,12 +344,26 @@ KCCA.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,
 kernel="rbfdot",sigma = 0.05,n.boot=500)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Kernel Canonical Correlation Analysis}
+	Gene-based interaction based on Kernel Canonical Correspondance
+	Analysis
 
-\code{KCCU = 1.407369, p-value = 0.1593179
-}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+KCCU = 1.4055, n.boot = 500, p-value = 0.1599
+alternative hypothesis: true KCCU is not equal to 0
+sample estimates:
+       z0        z1 
+ 3.717346 -3.759154 
+
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Kernel Canonical Correlation Analysis}
+%
+%\code{KCCU = 1.407369, p-value = 0.1593179
+%}
 
 <<>>==
 set.seed(1234)
@@ -303,11 +371,25 @@ KCCA.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,
 kernel="polydot",degree = 1, scale = 1, offset = 1)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Kernel Canonical Correlation Analysis}
+	Gene-based interaction based on Kernel Canonical Correspondance
+	Analysis
 
-\code{KCCU = -1.413508, p-value = 0.1575063}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+KCCU = 1.4106, n.boot = 100, p-value = 0.1584
+alternative hypothesis: true KCCU is not equal to 0
+sample estimates:
+       z0        z1 
+ 4.161048 -4.251702 
+
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Kernel Canonical Correlation Analysis}
+%
+%\code{KCCU = -1.413508, p-value = 0.1575063}
 
 %%%%%%%%%%%%%%%
 \subsection{Partial Least Square Path Modeling (PLSPM)}
@@ -330,12 +412,24 @@ set.seed(1234)
 PLSPM.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,n.perm=1000)
 @
 
-\vskip0.5em
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Partial Least Squares Path Modeling}
+	Gene-based interaction based on Partial Least Squares Path Modeling
 
-\code{U = 4.093781, p-value = 0.18}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+U = 4.0938, n.perm = 1000, p-value = 0.18
+alternative hypothesis: true U is not equal to 0
+sample estimates:
+     beta0      beta1 
+-0.2125869  0.2434624 
+\end{Soutput}
+
+%\vskip0.5em
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Partial Least Squares Path Modeling}
+%
+%\code{U = 4.093781, p-value = 0.18}
 
 %%%%%%%%%%%%%%%
 \subsection{Composite Linkage Disequilibrium (CLD)}
@@ -397,12 +491,24 @@ set.seed(1234)
 CLD.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,n.perm=2000)
 @
 
-\vskip0.5em
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Composite Linkage Disequilibrium}
+	Gene-based interaction based on Composite Linkage Disequilibrium
 
-\code{CLD = 0.4925654, p-value = 0.8865}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+CLD = 0.49257, n.perm = 2000, p-value = 0.8865
+alternative hypothesis: true CLD is not equal to 0
+sample estimates:
+      CLD 
+0.4925654 
+\end{Soutput}
+
+%\vskip0.5em
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Composite Linkage Disequilibrium}
+%
+%\code{CLD = 0.4925654, p-value = 0.8865}
 
 
 %%%%%%%%%%%%%%%
@@ -428,11 +534,22 @@ set.seed(1234)
 GBIGM.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,n.perm=2000)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
+	Gene-based interaction based on Gene-based Information Gain Method
 
-\code{\null \hskip2cm 	 Gene-based Information Gain Method}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+DeltaR1,2 = 0.46441, n.perm = 2000, p-value = 0.441
+alternative hypothesis: two.sided
+sample estimates:
+DeltaR1,2 
+0.4644093 
+\end{Soutput}
 
-\code{DeltaR1,2 = 0.4644093, p-value = 0.441}
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Gene-based Information Gain Method}
+%
+%\code{DeltaR1,2 = 0.4644093, p-value = 0.441}
 
 %%%%%%%%%%%%%%%
 \section{From SNP-SNP interaction to Gene-Gene interaction testing}
@@ -490,11 +607,23 @@ set.seed(1234)
 minP.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 minP}
+	Gene-based interaction based on minP method
 
-\code{minP = 0.009924148, p-value = 0.1795672}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+Wmax = 0.0099241, p-value = 0.1796
+alternative hypothesis: true Wmax is greater than 0
+sample estimates:
+       Wmax 
+0.009924148 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 minP}
+%
+%\code{minP = 0.009924148, p-value = 0.1795672}
 
 
 %%%%%%%%%%%%%%%
@@ -517,48 +646,97 @@ set.seed(1234)
 gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,me.est="ChevNy")
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 GATES}
+	Gene-based interaction based on GATES method
 
-\code{GATES = 0.009924148, p-value = 0.293932
-}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+GATES = 0.0099241, p-value = 0.2939
+alternative hypothesis: less
+sample estimates:
+      GATES 
+0.009924148 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 GATES}
+%
+%\code{GATES = 0.009924148, p-value = 0.293932
+%}
 
 <<>>==
 set.seed(1234)
 gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,alpha=0.05,me.est="Keff")
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 GATES }
+	Gene-based interaction based on GATES method
 
-\code{GATES = 0.01394543, p-value = 0.1899414
-}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+GATES = 0.013945, p-value = 0.1899
+alternative hypothesis: less
+sample estimates:
+     GATES 
+0.01394543 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 GATES }
+%
+%\code{GATES = 0.01394543, p-value = 0.1899414
+%}
 
 <<>>==
 set.seed(1234)
 gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,me.est="LiJi")
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 GATES}
+	Gene-based interaction based on GATES method
 
-\code{GATES = 0.01394543, p-value = 0.1255088
-}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+GATES = 0.013945, p-value = 0.1255
+alternative hypothesis: less
+sample estimates:
+     GATES 
+0.01394543 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 GATES}
+%
+%\code{GATES = 0.01394543, p-value = 0.1255088
+%}
 
 <<>>==
 set.seed(1234)
 gates.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,me.est="Galwey")
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 GATES}
+	Gene-based interaction based on GATES method
 
-\code{GATES = 0.01394543, p-value = 0.1596024
-}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+GATES = 0.013945, p-value = 0.1596
+alternative hypothesis: less
+sample estimates:
+     GATES 
+0.01394543 
+
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 GATES}
+%
+%\code{GATES = 0.01394543, p-value = 0.1596024
+%}
 
 \newpage
 \subsection{tTS and tProd}\
@@ -585,23 +763,47 @@ set.seed(1234)
 tTS.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,tau=0.5,n.sim=10000)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2cm 	 Truncated Tail Strength}
+	Gene-based interaction based on the Truncated Tail Strength method
 
-\code{tTS = -0.009912706, p-value = 0.5104
-}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+tTS = -0.0099127, tau = 0.5, p-value = 0.5104
+alternative hypothesis: less
+sample estimates:
+         tTS 
+-0.009912706 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2cm 	 Truncated Tail Strength}
+%
+%\code{tTS = -0.009912706, p-value = 0.5104
+%}
 
 <<>>==
 set.seed(1234)
 tProd.test(Y=gene.pair$Y, G1=gene.pair$G1,G2=gene.pair$G2,tau=0.05,n.sim=1000)
 @
 
-\code{Gene-Gene Interaction method performed with:}
+\begin{Soutput}
 
-\code{\null \hskip2em 	 Truncated Product}
+	Gene-based interaction based on the Truncated Product method
 
-\code{tProd = 3.69877e-12, p-value = 0.485}
+data:  gene.pair$Y and  (gene.pair$G1 , gene.pair$G2)
+tProd = 0.0001384, tau = 0.05, p-value = 0.265
+alternative hypothesis: less
+sample estimates:
+       tProd 
+0.0001383965 
+\end{Soutput}
+
+%\code{Gene-Gene Interaction method performed with:}
+%
+%\code{\null \hskip2em 	 Truncated Product}
+%
+%\code{tProd = 3.69877e-12, p-value = 0.485}
 
 
 \bibliographystyle{apalike}

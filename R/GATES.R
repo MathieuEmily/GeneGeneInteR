@@ -1,4 +1,7 @@
 gates.test <- function(Y, G1, G2, alpha = 0.05, me.est = c("ChevNy", "Keff", "LiJi","Galwey")){
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
   }
@@ -75,8 +78,25 @@ gates.test <- function(Y, G1, G2, alpha = 0.05, me.est = c("ChevNy", "Keff", "Li
 	pval <- as.numeric(GG.PGates)
 	stat <- sorted.SSI[which.min(me$Meff * sorted.SSI/me$mej)]
 	names(stat)="GATES"
-	res <- list(statistic=stat,p.value=pval,method="GATES")
-	class(res) <- "GGItest"
+	#res <- list(statistic=stat,p.value=pval,method="GATES")
+	#class(res) <- "GGItest"
+#  return(res)
+
+  	null.value <- NULL
+#	names(null.value) <- "GATES"
+	estimate <- c(stat)
+	names(estimate) <- c("GATES")
+	parameters <- NULL
+#	names(parameters) <- ""
+	res <- list(
+		null.value=null.value,
+		alternative="less",
+		method="Gene-based interaction based on GATES method",
+		estimate= estimate,
+		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),			statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
   return(res)
 
 

@@ -22,10 +22,13 @@ Must have a number of rows equal to the length of \code{Y}.}
 \value{
 A list with class \code{"GGItest"} containing the following components:
 
-	\item{statistic}{The value of the statistic tTS}
+	\item{statistic}{The value of the statistic tProd.}
 	\item{p.value}{The p-value for the test}
-	\item{method}{The method used to perform the Gene-Gene interaction test}
-	\item{parameter}{A list of the parameters used to perform the Gene-Gene Interaction test}
+	\item{estimate}{Estimation of tProd.}
+	\item{parameter}{The threshold value tau.}
+	\item{alternative}{a character string describing the alternative.}
+	\item{method}{a character string indicating the method used.}
+	\item{data.name}{a character string giving the names of the data.}	
 
 }
 \description{

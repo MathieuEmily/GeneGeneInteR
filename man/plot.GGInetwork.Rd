@@ -4,8 +4,8 @@
 \usage{
 \method{plot}{GGInetwork}(x,method=c("heatmap","network"),threshold=NULL, 
 col=c("#D6604D","#104E8B"),colbar.width=0.15, title=NULL,hclust.order=FALSE, 
-use.log=FALSE,NA.col="#D3D3D3",draw.pvals=(ncol(x$p.value) <= 15), 
-draw.names=(ncol(x$p.value)<= 25),interact=FALSE, 
+use.log=FALSE,NA.col="#D3D3D3",draw.pvals=NULL, 
+draw.names=NULL,interact=FALSE, 
 method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), 
 genes=1:ncol(x$p.value), plot.nointer=TRUE, \dots)
 }
@@ -39,9 +39,9 @@ is generated.}
 
 \item{NA.col}{(\emph{Only for \code{method=heatmap}}.) A string. The color used when a p-value is strictly greater than \code{threshold}.}
 
-\item{draw.pvals}{(\emph{Only for \code{method=heatmap}}.) A boolean. Should p-values be plotted ? Disabled when the size of \code{GGI} exceeds \eqn{15*15}.}
+\item{draw.pvals}{(\emph{Only for \code{method=heatmap}}.) Either NULL or a boolean. Should p-values be plotted ? Disabled when the size of \code{GGI} exceeds \eqn{15*15}.}
 
-\item{draw.names}{(\emph{Only for \code{method=heatmap}}.) A boolean. Should genes' names be plotted on matrix margins? Disabled when the size of \code{GGI} exceeds \eqn{25*25}.}
+\item{draw.names}{(\emph{Only for \code{method=heatmap}}.) Either NULL or a boolean. Should genes' names be plotted on matrix margins? Disabled when the size of \code{GGI} exceeds \eqn{25*25}.}
 
 \item{interact}{(\emph{Only for \code{method=heatmap}}.) A boolean. Should the plot be clickable ? (See Details for more information). Disabled when open R session is not interactive.}
 
@@ -55,7 +55,7 @@ is generated.}
 \details{
 	If \code{method=heatmap}, this function draw the upper half of a Gene-Gene Interaction results matrix without its diagonal. A gradient is created from 0 to 1 (by default from crimson to white) and the matrix cells are colored according to the corresponding p-value.
 
- By  default, p-values and names are drawn to make matrix reading easier, but
+ By  default, when \code{draw.pvals==NULL} and \code{draw.names==NULL}, p-values and names are drawn to make matrix reading easier, but
  in case parameter \code{GGI} is large, p-values (and eventually gene names as
  \code{GGI} grows bigger) are not drawn. In that case, the default behavior
  of the function is to start an interactive process where user can click on a

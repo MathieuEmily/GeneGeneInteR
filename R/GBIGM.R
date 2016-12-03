@@ -1,5 +1,8 @@
 GBIGM.test <- function(Y, G1, G2, n.perm = 1000){
 
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
   }
@@ -64,11 +67,30 @@ GBIGM.test <- function(Y, G1, G2, n.perm = 1000){
   pval<-sum(Delta1.2>=Delta1.2init)/n.perm
 	 stat <- Delta1.2init
 	names(stat)="DeltaR1,2"
-	list.param <- list(n.perm=n.perm)
-	res <- list(statistic=stat,p.value=pval,method="Gene-based Information Gain Method",parameter=list.param)
-	class(res) <- "GGItest"
-  return(res)
+	# list.param <- list(n.perm=n.perm)
+	# res <- list(statistic=stat,p.value=pval,method="Gene-based Information Gain Method",parameter=list.param)
+	# class(res) <- "GGItest"
+  # return(res)
 #  return(pval)
+
+    null.value <- NULL
+#names(null.value) <- "DeltaR1,2"
+estimate <- c(stat)
+names(estimate) <- c("DeltaR1,2")
+parameters <- n.perm
+names(parameters) <- "n.perm"
+	res <- list(
+		null.value=null.value,
+		alternative="two.sided",
+		method="Gene-based interaction based on Gene-based Information Gain Method",
+		estimate= estimate,
+		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),
+		statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
+  return(res)
+
 }
 
 base3to10 <- function(gene){

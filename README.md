@@ -1,5 +1,7 @@
 # GeneGeneInteR
+The aim of this package is to propose several methods for testing gene-gene interaction in case-control association studies. Such a test can be done by aggregating SNP-SNP interaction tests performed at the SNP level (SSI) or by using gene-gene multidimensionnal methods (GGI) methods. The package also proposes tools for a graphic display of the results.
 
+## Installation
 To install and load the package in R
 
 ```ruby
@@ -8,6 +10,7 @@ install_github("MathieuEmily/GeneGeneInteR")
 library(GeneGeneInteR)
 ```
 
+## A detailed example
  
 Importation of genotypes with ImportFile function
 Supported format are pedfile, PLINK, VCF (4.0) file, or genotypes imputed by IMPUTE2.
@@ -28,12 +31,12 @@ Prior to the statistical analysis, dataset can be modified by applying filters t
 
 
 ```ruby
-## Filtering of the data: SNPs with MAF < 0.05 or p.value for HWE < 1e-3 are removed. No filtering is applied regarding missing data (NA.rate=1).
-dta <- snpMatrixScour(snpX=dta$snpX,genes.info=dta$genes.info,min.maf=0.05,min.eq=1e-3,NA.rate=1)
+## Filtering of the data: SNPs with MAF < 0.05 or p.value for HWE < 1e-3 are removed. No filtering is applied regarding missing data (call.rate=1).
+data <- snpMatrixScour(data$snpX,genes.info = data$genes.info, min.maf = 0.05, min.eq = 1e-3, call.rate = 1)
 ## Imputation of the missing genotypes
-dta <- imputeSnpMatrix(dta$snpX, genes.info = dta$genes.info)
+dta <- imputeSnpMatrix(data$snpX,data$genes.info)
 ## Selection of a subset of 12 genes
-dta <- select.snps(dta$snpX, dta$genes.info, c("bub3","CDSN","Gc","GLRX","PADI1","PADI2","PADI4","PADI6","PRKD3","PSORS1C1","SERPINA1","SORBS1"))
+dta <- selectSnps(dta$snpX, dta$genes.info, c("bub3","CDSN","Gc","GLRX","PADI1","PADI2","PADI4","PADI6","PRKD3","PSORS1C1","SERPINA1","SORBS1"))
 ```
 
 Gene-based gene-gene interaction analysis can be performed by testing each pair of genes in the datatset (function GGI). 10 methods are implemented in the GeneGeneInteR package to test a pair of genes: 

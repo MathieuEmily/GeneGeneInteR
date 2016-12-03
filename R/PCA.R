@@ -1,11 +1,17 @@
 PCA.test <- function(Y,G1,G2,threshold=0.8,method="GenFreq"){
 	if (method=="GenFreq"){
 		tmp <- PCA.GenFreq(Y=Y,G1=G1,G2=G2,threshold=threshold)
-		tmp$parameter <- list(threshold=threshold,method=method)
+		tmp$data.name <- paste(deparse(substitute(Y))," and  (",deparse(substitute(G1))," , ",deparse(substitute(G2)),")",sep="")
+		tmp$method <- paste(tmp$method,"-",method)
+		tmp$parameters <- c(tmp$parameters,threshold)
+		names(tmp$parameters) <- c("df","threshold")
 		return(tmp)
 	} else if (method=="Std"){
 		tmp <- PCA.Std(Y=Y,G1=G1,G2=G2,threshold=threshold)
-		tmp$parameter <- list(threshold=threshold,method=method)
+		tmp$data.name <- paste(deparse(substitute(Y))," and  (",deparse(substitute(G1))," , ",deparse(substitute(G2)),")",sep="")
+		tmp$method <- paste(tmp$method,"-",method)
+		tmp$parameters <- c(tmp$parameters,threshold)
+		names(tmp$parameters) <- c("df","threshold")
 		return(tmp)
 	} else {
 		stop("method argument should be a character string either GenFreq or Std")
@@ -263,9 +269,22 @@ compare.PCA <- function(Resp., G1.PCA, G2.PCA) {
 pval <- comp.res$'Pr(>Chi)'[2]
 stat <- comp.res$'Deviance'[2]
 df <- comp.res$'Df'[2]
-	names(stat)="Deviance"
-	res <- list(statistic=stat,p.value=pval,method="Principal Component Analysis",df=df)
-	class(res) <- "GGItest"
+names(stat)="Deviance"
+null.value <- 0
+names(null.value) <- "deviance"
+
+estimate <- c(comp.res$"Resid. Dev"[1],comp.res$"Resid. Dev"[2])
+names(estimate) <- c("Deviance without interaction","Deviance with interaction")
+	res <- list(
+		null.value=null.value,
+		alternative="greater",
+		method="Gene-based interaction based on Principal Component Analysis",
+		estimate= estimate,
+		data.name="d",
+		statistic=stat,
+		p.value=pval,
+		parameters=df)
+	class(res) <- "htest"
   return(res)
 #  return(comp.res$'Pr(>Chi)'[2])
 }

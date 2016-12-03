@@ -23,8 +23,10 @@ Must have a number of rows equal to the length of \code{Y}.}
 A list with class \code{"GGItest"} containing the following components:
 	\item{statistic}{The value of the statistic: the p-value kept as the minimum after GATES correction)}
 	\item{p.value}{Tue p-value for the test}
-	\item{method}{The method used to perform the Gene-Gene interaction test}
-	\item{parameter}{A list of the parameters used to perform the Gene-Gene Interaction test}
+	\item{estimate}{The estimation of the GATES p-value.}
+	\item{alternative}{a character string describing the alternative.}
+	\item{method}{a character string indicating the method used.}
+	\item{data.name}{a character string giving the names of the data.}	
 }
 \description{
 \code{gates.test}, \code{minP.test}, \code{tTS.test} and \code{tProd.test} aim at performing gene-gene interaction analysis based on SNP-SNP interaction tests. The following methods are used to combine SNP-SNP interaction tests

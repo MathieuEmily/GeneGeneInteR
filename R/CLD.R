@@ -1,4 +1,7 @@
 CLD.test <- function(Y, G1, G2, n.perm = 1000){
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
 
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
@@ -45,12 +48,34 @@ CLD.test <- function(Y, G1, G2, n.perm = 1000){
     }
   }
   
+  
   pval <- mean(stat.perm > stat)
-  	names(stat)="CLD"
-	list.param<-list(n.perm = n.perm)
-	res <- list(statistic=stat,p.value=pval,method="Composite Linkage Disequilibrium",parameter=list.param)
-	class(res) <- "GGItest"
+  names(stat)="CLD"
+#	list.param<-list(n.perm = n.perm)
+#	res <- list(statistic=stat,p.value=pval,method="Composite Linkage Disequilibrium",parameter=list.param)
+#	class(res) <- "GGItest"
+ # return(res)
+  
+    null.value <- 0
+	names(null.value) <- "CLD"
+	estimate <- c(stat)
+names(estimate) <- c("CLD")
+parameters <- n.perm
+names(parameters) <- "n.perm"
+	res <- list(
+		null.value=null.value,
+		alternative="two.sided",
+		method="Gene-based interaction based on Composite Linkage Disequilibrium",
+		estimate= estimate,
+		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),		
+#		paste("Interaction between",deparse(substitute(G1)),"and",deparse(substitute(G2)),"in association with",Y.arg),
+		statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
   return(res)
+
+  
 }
 
 CLD <- function(Y,X1,X2,bool){

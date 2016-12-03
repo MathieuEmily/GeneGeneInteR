@@ -1,10 +1,10 @@
-plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col=c("#D6604D", "#104E8B"), colbar.width=0.15, title=NULL,  hclust.order=FALSE, use.log=FALSE, NA.col="#D3D3D3", draw.pvals=(ncol(x$p.value) <= 15), draw.names=(ncol(x$p.value) <= 25), interact=FALSE, method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), genes=1:ncol(x$p.value), plot.nointer=TRUE, ...){
+plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col=c("#D6604D", "#104E8B"), colbar.width=0.15, title=NULL,  hclust.order=FALSE, use.log=FALSE, NA.col="#D3D3D3", draw.pvals=NULL, draw.names=NULL, interact=FALSE, method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), genes=1:ncol(x$p.value), plot.nointer=TRUE, ...){
 	if(class(x)!="GGInetwork") {
 	    stop("x should be an object of class GGInetwork.")
 	}
 	method <- match.arg(method)
 	switch(method,
-			heatmap=GGI.plot(GGI=x$p.value, genes=genes, col=col, colbar.width=colbar.width, title=title, hclust.order=hclust.order, use.log=use.log, threshold=threshold, NA.col=NA.col, draw.pvals=draw.pvals, interact=interact, method.adjust=method.adjust),
+			heatmap=GGI.plot(GGI=x$p.value, genes=genes, col=col, colbar.width=colbar.width, title=title, hclust.order=hclust.order, use.log=use.log, threshold=threshold, NA.col=NA.col, draw.pvals=draw.pvals, draw.names=draw.names, interact=interact, method.adjust=method.adjust),
 			network=draw.network(GGI=x$p.value, genes=genes, threshold=threshold, plot.nointer=plot.nointer))
 }
 
@@ -12,7 +12,7 @@ plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col
 GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.width=0.15,
                      title=NULL, hclust.order=FALSE, use.log=FALSE,
                      threshold=NULL, NA.col="#D3D3D3",
-                     draw.pvals=(ncol(GGI) <= 15), draw.names=(ncol(GGI) <= 25),
+                     draw.pvals=NULL, draw.names=NULL,
                      interact=!(draw.pvals && draw.names),method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr")) {
 
   if(!is.matrix(GGI) && !is.numeric(GGI[1, 1])) {
@@ -27,7 +27,7 @@ GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.w
     stop("colbar.width argument should be a positive numeric")
   } else if (!is.character(title) && !is.null(title)) {
     stop("title argument should be a string.")
-  } else if (!is.logical(draw.pvals) | !is.logical(draw.names)) {
+  } else if ((!is.logical(draw.pvals) & !is.null(draw.pvals)) | (!is.logical(draw.names) & !is.null(draw.names))) {
     stop("show.pvals & draw.names arguments should be logical.")
   } else if (!is.logical(hclust.order)) {
     stop("hclust.order argument should be logical.")
@@ -48,6 +48,19 @@ GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.w
   }
 
   GGI <- GGI[genes,genes]
+
+	if (is.null(draw.pvals)){
+		draw.pvals <- (ncol(GGI) <= 15)
+	}
+	if (ncol(GGI) > 15){
+		draw.pvals <- FALSE
+	}
+	if (is.null(draw.names)){
+		draw.names <- (ncol(GGI) <= 25)
+	}
+	if (ncol(GGI) > 25){
+		draw.names <- FALSE
+	}
 
 	method.adjust <- match.arg(method.adjust)
 	

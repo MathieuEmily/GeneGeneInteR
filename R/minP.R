@@ -1,4 +1,7 @@
 minP.test <- function(Y, G1, G2){
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
 
   # Checking if gene splitting is needed
   if (ncol(G1) * ncol(G2) > 1000){
@@ -9,11 +12,14 @@ minP.test <- function(Y, G1, G2){
 	  	clust.tree.G1 <- rioja::chclust(distance.G1)
 	  	k1 <- cutree(clust.tree.G1, k=1:(ncol(G1)-30))
 	  	max.G1 <- sapply(1:(ncol(G1)-30),FUN=function(i){return(max(table(as.factor(k1[,i]))))})
-	  	max.G1 <- max.G1[c(which(max.G1 > 20),which(max.G1 < 30)[1])]
+#	  	max.G1 <- max.G1[c(which(max.G1 > 20),which(max.G1 < 30)[1])]
+	  	id.max.G1 <- which(max.G1 <= 30)[1]
+ 
   	} else{
   		k1  <- matrix(rep(1,ncol(G1)),ncol=1)
   		row.names(k1) <- colnames(G1)
   		max.G1 <- ncol(G1)
+  		id.max.G1 <- 1
   		}
   	
   	
@@ -24,18 +30,23 @@ minP.test <- function(Y, G1, G2){
   		clust.tree.G2 <- rioja::chclust(distance.G2)
   		k2 <- cutree(clust.tree.G2, k=1:(ncol(G2)-30))
   		max.G2 <- sapply(1:(ncol(G2)-30),FUN=function(i){return(max(table(as.factor(k2[,i]))))})
-  		max.G2 <- max.G2[c(which(max.G2 > 20),which(max.G2 < 30)[1])]
+#  		max.G2 <- max.G2[c(which(max.G2 > 20),which(max.G2 < 30)[1])]
+  		id.max.G2 <- which(max.G2 <= 30)[1]
 	} else {
 		k2  <- matrix(rep(1,ncol(G2)),ncol=1)
   		row.names(k2) <- colnames(G2)
   		max.G2 <- ncol(G2)
+  		id.max.G2 <- 1
 	}
 	
 	## Detection of the subset of SNPs that cut each gene in sufficiently small pieces 
-	mult <- outer(max.G1,max.G2,"*")
-	tmp.mult <- (mult < 900)*mult
-	division <- which(tmp.mult==max(tmp.mult),arr.ind=TRUE)[1,]
+	#mult <- outer(max.G1[ind.max.G1],max.G2[ind.max.G2],"*")
+	#tmp.mult <- (mult < 900)*mult
+	division <- c(id.max.G1,id.max.G2)
+#	division <- which(tmp.mult==max(tmp.mult),arr.ind=TRUE)[1,]
 #	division <- which(mult < 900,arr.ind=TRUE)[1,]
+
+
 
 	boundaries.start.G1 <- c(1,1+as.numeric(which(sapply(1:(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))))
 	boundaries.end.G1 <- c(as.numeric(which(sapply(1:(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))),ncol(G1))
@@ -72,18 +83,40 @@ minP.test <- function(Y, G1, G2){
     
   }
 
+
 	tmp <- p.adjust(pairs.p.val, "BH")
 	pval <- min(tmp)[1]
 	stat <- pairs.stat[which.min(tmp)]
-	names(stat)="minP"
-	res <- list(statistic=stat,p.value=pval,method="minP")
-	class(res) <- "GGItest"
+	names(stat)="Wmax"
+#	res <- list(statistic=stat,p.value=pval,method="minP")
+#	class(res) <- "GGItest"
+ # return(res)
+  
+  	null.value <- NULL
+#	names(null.value) <- "Wmax"
+	estimate <- c(stat)
+	names(estimate) <- c("Wmax")
+	parameters <- NULL
+#	names(parameters) <- ""
+	res <- list(
+		null.value=null.value,
+		alternative="greater",
+		method="Gene-based interaction based on minP method",
+		estimate= estimate,
+		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),
+		statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
   return(res)
+
 
 }
 
-
 minP.test.2pairs <- function(Y, G1, G2){
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
 
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
@@ -151,9 +184,28 @@ minP.test.2pairs <- function(Y, G1, G2){
 	}
 	pval <- as.numeric(GG.Pmin)
 	stat <- SSI.min
-	names(stat)="minP"
-	res <- list(statistic=stat,p.value=pval,method="minP")
-	class(res) <- "GGItest"
+	names(stat)="Wmax"
+	#res <- list(statistic=stat,p.value=pval,method="minP")
+	#class(res) <- "GGItest"
+#  return(res)
+
+	null.value <- 0
+	names(null.value) <- "Wmax"
+	estimate <- c(stat)
+	names(estimate) <- c("Wmax")
+	parameters <- NULL
+#	names(parameters) <- ""
+	res <- list(
+		null.value=null.value,
+		alternative="greater",
+		method="Gene-based interaction based on minP method",
+		estimate= estimate,
+		data.name=paste("Interaction between",G1.arg,"and",G2.arg,"in association with",Y.arg),
+		statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
   return(res)
+
 
 }

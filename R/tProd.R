@@ -1,4 +1,7 @@
 tProd.test <- function(Y, G1, G2, tau = 0.05, n.sim = 1000){
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
 
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
@@ -65,9 +68,28 @@ tProd.test <- function(Y, G1, G2, tau = 0.05, n.sim = 1000){
 	
 	stat <- T0
 	names(stat)="tProd"
-	res <- list(statistic=stat,p.value=pval,method="Truncated Product")
-	class(res) <- "GGItest"
+#	res <- list(statistic=stat,p.value=pval,method="Truncated Product")
+#	class(res) <- "GGItest"
+#  return(res)
+
+  	null.value <- NULL
+#	names(null.value) <- "tProd"
+	estimate <- c(stat)
+	names(estimate) <- c("tProd")
+	parameters <- tau
+	names(parameters) <- "tau"
+	res <- list(
+		null.value=null.value,
+		alternative="less",
+		method="Gene-based interaction based on the Truncated Product method",
+		estimate= estimate,
+		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),
+		statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
   return(res)
+
 
 #  return(sum(Ti[Ti<T0],na.rm=T)/n.sim)
 }

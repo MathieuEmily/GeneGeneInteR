@@ -20,13 +20,16 @@ Must have a number of rows equal to the length of \code{Y}.}
 \item{method}{(optional) character string for PCA method. Must be one of the following: "GenFreq", "Std" (See details).}
 }
 \value{
-A list with class \code{"GGItest"} containing the following components:
+A list with class \code{"htest"} containing the following components:
 
-	\item{statistic}{The value of the statistic: the deviance of the anova test}
-	\item{p.value}{The p-value for the test}
-	\item{method}{The method used to perform the Gene-Gene interaction test}
-	\item{parameter}{A list of the parameters used to perform the Gene-Gene Interaction test}
-	
+	\item{statistic}{The value of the statistic: the deviance of the anova test.}
+	\item{p.value}{The p-value for the test.}
+	\item{estimate}{A vector of the residual deviances.}
+	\item{parameter}{The degrees of freedom of the chi-squared distribution of the test statistic.}
+	\item{null.value}{the value of the deviance under the null.}
+	\item{alternative}{a character string describing the alternative.}
+	\item{method}{a character string indicating the method used.}
+	\item{data.name}{a character string giving the names of the data.}	
 }
 \description{
 \code{PCA.test} performs a Gene-Gene Interaction (GGI) analysis by testing the interaction between the principal components of the two genes. With \code{method="Std"} PCA is standardized using standard deviation for each variable. With \code{method="GenFreq"}, dataset is standardized using the standard deviation under Hardy-Weinberg equilibrium, as proposed in the \href{http://bioconductor.org/packages/snpStats/}{snpStats} Bioconductor package. 

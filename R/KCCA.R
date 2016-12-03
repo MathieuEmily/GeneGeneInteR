@@ -1,4 +1,7 @@
 KCCA.test <- function(Y, G1, G2, kernel=c("rbfdot","polydot","tanhdot","vanilladot","laplacedot","besseldot","anovadot","splinedot"),n.boot = 500,sigma=0.05,degree=1,scale=1,offset=1,order=1){
+	Y.arg <- deparse(substitute(Y))
+	G1.arg <- deparse(substitute(G1))
+	G2.arg <- deparse(substitute(G2))
 
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
@@ -48,22 +51,45 @@ KCCA.test <- function(Y, G1, G2, kernel=c("rbfdot","polydot","tanhdot","vanillad
   Y <- as.factor(Y)
 
   stat<-"empty"
-  try(stat <- get.kU(Y=Y,X1=X1,X2=X2,kernel=kernel,n.boot=n.boot))
+  try(result <- get.kU(Y=Y,X1=X1,X2=X2,kernel=kernel,n.boot=n.boot))
 
-  if(is.na(stat)){
+  if(is.na(result[1])){
     pval<-1
 
   } else {
-    if(stat=="empty"){stop("P-value could not be computed, test statistic is missing")}
+    if(result[1]=="empty"){stop("P-value could not be computed, test statistic is missing")}
+    stat <- result$stat
     pval <- 2*(1-pnorm(abs(stat)))
+	z0 <- result$z0
+	z1 <- result$z1
 
   }
 
 	names(stat)="KCCU"
-	list.param <- list(n.boot=n.boot,kernel=kernel)
-	res <- list(statistic=stat,p.value=pval,method="Kernel Canonical Correlation Analysis",paramter=list.param)
-	class(res) <- "GGItest"
+	# list.param <- list(n.boot=n.boot,kernel=kernel)
+	# res <- list(statistic=stat,p.value=pval,method="Kernel Canonical Correlation Analysis",paramter=list.param)
+	# class(res) <- "GGItest"
+  # return(res)
+  
+  null.value <- 0
+names(null.value) <- "KCCU"
+estimate <- c(z0,z1)
+names(estimate) <- c("z0","z1")
+parameters <- n.boot
+names(parameters) <- "n.boot"
+	res <- list(
+		null.value=null.value,
+		alternative="two.sided",
+		method="Gene-based interaction based on Kernel Canonical Correspondance Analysis",
+		estimate= estimate,
+		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),
+		statistic=stat,
+		p.value=pval,
+		parameters=parameters)
+	class(res) <- "htest"
   return(res)
+
+  
 #  return(pval)
 }
 
@@ -94,7 +120,7 @@ get.kU <- function(Y,X1,X2,kernel=kernel,n.boot=500){
         try(vz0 <- estim.var.kz(X1.0,X2.0,kernel=kernel,n.boot=n.boot))
         try(vz1 <- estim.var.kz(X1.1,X2.1,kernel=kernel,n.boot=n.boot))
         if(is.na(vz0)||is.na(vz1)){stop("The test statistic could not be computed, the variance estimator is missing")}
-        else{return((z0-z1)/sqrt(vz0+vz1))}
+        else{return(list(stat=(z0-z1)/sqrt(vz0+vz1),z0=z0,z1=z1))}
       }
     }
   }

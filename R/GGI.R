@@ -108,7 +108,7 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
 		rownames(df.matrix) <- genes.names
 	}
 
-	res.method <- NULL
+	res.method <- method
 	res.parameter <- NULL
 
   #Application of the method on the interactions
@@ -133,9 +133,9 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
     pval.matrix[interactions[1, i], interactions[2, i]] <- tmp$p.value
     stat.matrix[interactions[1, i], interactions[2, i]] <- tmp$statistic
     if (method=="PCA"){
-    	df.matrix[interactions[1, i], interactions[2, i]] <- tmp$df    	
+    	df.matrix[interactions[1, i], interactions[2, i]] <- tmp$parameters["df"]    	
     }
-    if (is.null(res.method)){res.method <- tmp$method}
+#    if (is.null(res.method)){res.method <- tmp$method}
     if (is.null(res.parameter)){res.parameter <- tmp$parameter}
 
 #} 
