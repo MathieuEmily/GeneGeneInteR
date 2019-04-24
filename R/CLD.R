@@ -7,15 +7,15 @@ CLD.test <- function(Y, G1, G2, n.perm = 1000){
     Y <- Y[, 1]
   }
 
-  if(class(n.perm)!="numeric"){
+  if(!is.numeric(n.perm)){
     stop("n.boot must be numeric.")
   } else if(n.perm<1){
     stop("n.boot must be strictly superior to 0.")
   } else if(nlevels(as.factor(Y))!=2){
     stop("Y must be a factor with 2 levels, most likely 0 and 1.")
-  } else if(class(G1)!="SnpMatrix"){
+  } else if(!is(G1,"SnpMatrix")){
     stop("G1 must be a SnpMatrix object.")
-  } else if(class(G2)!="SnpMatrix"){
+  } else if(!is(G2,"SnpMatrix")){
     stop("G2 must be a SnpMatrix object")
   } else if(nrow(G1)!=nrow(G2)){
     stop("Both G1 and G2 must contain the same number of individuals.")
@@ -41,7 +41,8 @@ CLD.test <- function(Y, G1, G2, n.perm = 1000){
   if(is.na(stat)){stop("P-value can't be computed")}
 
   stat.perm <- rep(NA,times=n.perm)
-  for (i in 1:n.perm){
+#  for (i in 1:n.perm){
+   for (i in seq_len(n.perm)){
     while(is.na(stat.perm[i])){
       Y.perm <- sample(Y,length(Y))
       stat.perm[i] <- CLD(Y.perm,X1,X2,1)
@@ -93,27 +94,28 @@ CLD <- function(Y,X1,X2,bool){
   X2.0 <- X2[wY0,]
 
   S <- cov(cbind(X1.1/2,X2.1/2))
-  S11 <- S[1:p1,1:p1]
-  S22 <- S[(p1+1):(p1+p2),(p1+1):(p1+p2)]
-  S12 <- S[(p1+1):(p1+p2),1:p1]
-  S21 <- S[1:p1,(p1+1):(p1+p2)]
+#  S11 <- S[1:p1,1:p1]
+  S11 <- S[seq_len(p1),seq_len(p1)]
+   S22 <- S[(p1+1):(p1+p2),(p1+1):(p1+p2)]
+  S12 <- S[(p1+1):(p1+p2),seq_len(p1)]
+  S21 <- S[seq_len(p1),(p1+1):(p1+p2)]
   my.T <- cov(cbind(X1.0/2,X2.0/2))
-  T11 <- my.T[1:p1,1:p1]
+  T11 <- my.T[seq_len(p1),seq_len(p1)]
   T22 <- my.T[(p1+1):(p1+p2),(p1+1):(p1+p2)]
-  T12 <- my.T[(p1+1):(p1+p2),1:p1]
-  T21 <- my.T[1:p1,(p1+1):(p1+p2)]
+  T12 <- my.T[(p1+1):(p1+p2),seq_len(p1)]
+  T21 <- my.T[seq_len(p1),(p1+1):(p1+p2)]
 
   W <- (m*S+n*my.T)/(m+n)
-  W11 <- W[1:p1,1:p1]
+  W11 <- W[seq_len(p1),seq_len(p1)]
   W22 <- W[(p1+1):(p1+p2),(p1+1):(p1+p2)]
 
   STilde <- W
-  STilde[(p1+1):(p1+p2),1:p1]  <- S12
-  STilde[1:p1,(p1+1):(p1+p2)]  <- S21
+  STilde[(p1+1):(p1+p2),seq_len(p1)]  <- S12
+  STilde[seq_len(p1),(p1+1):(p1+p2)]  <- S21
 
   TTilde <- W
-  TTilde[(p1+1):(p1+p2),1:p1]  <- T12
-  TTilde[1:p1,(p1+1):(p1+p2)]  <- T21
+  TTilde[(p1+1):(p1+p2),seq_len(p1)]  <- T12
+  TTilde[seq_len(p1),(p1+1):(p1+p2)]  <- T21
 
   delta2<-NA
   if(!bool){

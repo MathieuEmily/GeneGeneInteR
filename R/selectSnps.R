@@ -1,7 +1,7 @@
 selectSnps <- function(snpX, genes.info, select){
-  if(class(snpX)!="SnpMatrix"){
+  if(!is(snpX,"SnpMatrix")){
     stop("snpX must be a snpMatrix object.")
-  } else if(class(genes.info)!="data.frame"){
+  } else if(!is(genes.info,"data.frame")){
     stop("genes.info must be a data.frame.")
   } else if(ncol(snpX)!=nrow(genes.info)){
     stop("snpX and genes.info must have the same number of snps.")
@@ -9,7 +9,7 @@ selectSnps <- function(snpX, genes.info, select){
 
   res <- NULL
 
-  if(class(select)%in%c("numeric","integer")){
+  if(is(select,"numeric") | is(select,"integer")){
     if(any(c(select<1, select>ncol(snpX)))){
       stop("The selection of snps is out of bounds.")
     } else {
@@ -17,7 +17,7 @@ selectSnps <- function(snpX, genes.info, select){
       res[["genes.info"]] <- genes.info[select,]
     }
 
-  } else if(class(select)=="character"){
+  } else if(is.character(select)){
     if(all(select %in% colnames(snpX))){
       res[["snpX"]] <- snpX[,select]
       res[["genes.info"]] <- genes.info[genes.info[,"SNPnames"]%in%select,]
@@ -29,13 +29,13 @@ selectSnps <- function(snpX, genes.info, select){
       liste <- strsplit(select, ":")
       snp <- c()
       if(length(liste[[1]])==2){
-        for(i in 1:length(liste)){
+        for(i in seq_len(length(liste))){
           rows <- genes.info[as.numeric(genes.info[,"Position"])>=as.numeric(liste[[i]][1]),]
           rows <- rows[as.numeric(rows[,"Position"])<=as.numeric(liste[[i]][2]),]
           snp <- c(snp,as.character(rows[,"SNPnames"]))
         }
       } else if(length(liste[[1]])==3){
-        for(i in 1:length(liste)){
+        for(i in seq_len(length(liste))){
           rows <- genes.info[as.numeric(genes.info[,"Chromosome"])==as.numeric(liste[[i]][1]),]
           rows <- rows[as.numeric(rows[,"Position"])>=as.numeric(liste[[i]][2]),]
           rows <- rows[as.numeric(rows[,"Position"])<=as.numeric(liste[[i]][3]),]
@@ -54,7 +54,7 @@ selectSnps <- function(snpX, genes.info, select){
     stop("The argument select must be a numeric or character vector.")
   }
 
-  rownames(res[["genes.info"]]) <- 1:nrow(res[["genes.info"]])
+  rownames(res[["genes.info"]]) <- seq_len(nrow(res[["genes.info"]]))
   res$genes.info <- droplevels(res$genes.info)
   return(res)
 }

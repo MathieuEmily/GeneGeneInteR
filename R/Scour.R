@@ -1,6 +1,6 @@
 snpMatrixScour <- function(snpX, genes.length = NULL, genes.info = NULL,
                            min.maf = 0.01, min.eq = 0.01, call.rate=0.9) {
-  if (class(snpX) != "SnpMatrix") {
+  if (!is(snpX,"SnpMatrix")) {
     stop("snpX argument should be SnpMatrix object.")
   } else if (!is.null(genes.length) && (!(is.numeric(genes.length) || sum(genes.length) > ncol(snpX)))) {
     stop("genes.length argument should be a numeric vector which sum should be lesser than ncol(snpX).")
@@ -51,34 +51,34 @@ snpMatrixScour <- function(snpX, genes.length = NULL, genes.info = NULL,
 
       gene.start <- NULL
       gene.end <- NULL
-      for (i in 1:nlevels(genes.info$Genenames)) {
+      for (i in seq_len(nlevels(genes.info$Genenames))) {
         gene <- genes.info[which(genes.info$Genenames %in% levels(genes.info$Genenames)[i]), ]
         gene.start <- c(gene.start, min(which(colnames(snpX) %in% gene$SNPnames), na.rm = TRUE))
         gene.end   <- c(gene.end, max(which(colnames(snpX) %in% gene$SNPnames), na.rm = TRUE))
       }
     } else {
-      gene.start <- c(0, cumsum(genes.length)[1:(length(genes.length) - 1)]) + 1
+      gene.start <- c(0, cumsum(genes.length)[seq_len(length(genes.length) - 1)]) + 1
       gene.end   <- cumsum(genes.length)
     }
 
     n.genes <- length(gene.start)
     new.snpX <- NULL
-    for (i in 1:n.genes) {
+    for (i in seq_len(n.genes)) {
       cur.gene <- try(GeneScour(snpX[, gene.start[i]:gene.end[i]], min.maf, min.eq, call.rate), silent=TRUE)
 
-      if (class(cur.gene) == "try-error") {
+      if (is(cur.gene, "try-error")) {
         warning("A whole gene had to be removed as no SNP met the requirements.")
       }
 
       # Gene positions are updated
       if (is.null(genes.info)) {
-        if (class(cur.gene) == "try-error"){
+        if (is(cur.gene, "try-error")){
           new.genes[i] <- NA
         } else {
           new.genes[i] <- ncol(cur.gene)
         }
       } else {
-        if (class(cur.gene) == "try-error"){
+        if (is(cur.gene,"try-error")){
           cur.gene.name <- levels(genes.info$Genenames)[i]
           genes.info <- genes.info[- which(genes.info$Genenames == cur.gene.name),]
         } else {
@@ -90,9 +90,9 @@ snpMatrixScour <- function(snpX, genes.length = NULL, genes.info = NULL,
       }
 
       # Binding matrices
-      if (class(cur.gene) != "try-error" && is.null(new.snpX)) {
+      if (is(cur.gene,"try-error") && is.null(new.snpX)) {
         new.snpX <- cur.gene
-      } else if (class(cur.gene) != "try-error") {
+      } else if (!is(cur.gene,"try-error")) {
         new.snpX <- cbind(new.snpX, cur.gene)
       }
     }

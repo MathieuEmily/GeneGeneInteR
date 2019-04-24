@@ -8,7 +8,7 @@ gates.test <- function(Y, G1, G2, alpha = 0.05, me.est = c("ChevNy", "Keff", "Li
 
   if (nlevels(as.factor(Y)) != 2) {
     stop("response variable should be binary. (2 modes).")
-  } else if (class(G1) != "SnpMatrix" | class(G2) != "SnpMatrix") {
+  } else if (!is(G1,"SnpMatrix") | !is(G2,"SnpMatrix")) {
     stop("G1 and G2 arguments should be SnpMatrix objects.")
   } else if (nrow(G1) != nrow(G2)) {
     stop("G1 and G2 should have same rows count.")
@@ -32,7 +32,7 @@ gates.test <- function(Y, G1, G2, alpha = 0.05, me.est = c("ChevNy", "Keff", "Li
   if(min(Y)!=0){Y<-Y-min(Y)}
   Y <- as.factor(Y)
 
-  if (class(me.est) == "try-error") {
+  if (is(me.est,"try-error")) {
     stop("me.est argument has an incorrect value. Select one: ChevNy, Keff, LiJi, Galwey.")
   }
 
@@ -47,7 +47,7 @@ gates.test <- function(Y, G1, G2, alpha = 0.05, me.est = c("ChevNy", "Keff", "Li
 	n2 <- ncol(MatCor2)
 	n.pairs <- n1*n2
 	sigma.matrix <- matrix(NA,ncol=n.pairs,nrow=n.pairs)
-	for (i in 1:(n.pairs-1)){
+	for (i in seq_len(n.pairs-1)){
 		i1 <- floor((i-1)/n2)+1
 		j1 <- i-(i1-1)*n2
 		for (j in (i+1):n.pairs){
@@ -105,7 +105,7 @@ gates.test <- function(Y, G1, G2, alpha = 0.05, me.est = c("ChevNy", "Keff", "Li
 
 # Cheverud-Nyholt Me estimation method
 ChevNy.me <- function(sigma.matrix) {
-  if (class(sigma.matrix) != "matrix") {
+  if (!is.matrix(sigma.matrix)) {
     stop("sigma.matrix argument should be a numeric matrix.")
   }
 
@@ -113,8 +113,8 @@ ChevNy.me <- function(sigma.matrix) {
   Meff <- 1 +(1/N)*sum(1-sigma.matrix^2, na.rm=TRUE)
 
   mej <- numeric(ncol(sigma.matrix))
-  for (i in 1:ncol(sigma.matrix)){
-    mej[i] <- 1 + (1/i)*sum(1-sigma.matrix[1:i, 1:i]^2, na.rm=TRUE)
+  for (i in seq_len(ncol(sigma.matrix))){
+    mej[i] <- 1 + (1/i)*sum(1-sigma.matrix[seq_len(i), seq_len(i)]^2, na.rm=TRUE)
   }
 
   return(list(Meff=Meff, mej=mej))
@@ -123,7 +123,7 @@ ChevNy.me <- function(sigma.matrix) {
 # Meff and Mej are estimated through the computation of
 # Keff and kj
 Keff.me <- function(sigma.matrix, alpha=0.05) {
-  if (class(sigma.matrix) != "matrix") {
+  if (!is.matrix(sigma.matrix)) {
     stop("sigma.matrix argument should be a numeric matrix.")
   } else if (alpha < 0 | alpha > 1) {
     stop("alpha argument should be comprised between 0 and 1.")
@@ -134,7 +134,7 @@ Keff.me <- function(sigma.matrix, alpha=0.05) {
   kj[1] <- 0
   for (i in 2:length(kj)){
     if (alpha > 0.01) {
-      rj    <- max(abs(sigma.matrix[(1:(i-1)), i]))
+      rj    <- max(abs(sigma.matrix[(seq_len(i-1)), i]))
       sig   <- qnorm(1-(alpha/2))
 
       f     <- function(x, alpha, rj, sd) { exp(-0.5*x^2) * pnorm((rj*x - sd)/sqrt(1 - rj^2)) }
@@ -142,7 +142,7 @@ Keff.me <- function(sigma.matrix, alpha=0.05) {
 
       kj[i] <- ( (1/log(1-alpha)) * log(1 - (1/(1 - alpha)) * sqrt(2/pi) * int.f) )
     } else {
-      rj <- max(abs(sigma.matrix[(1:(i-1)), i]))
+      rj <- max(abs(sigma.matrix[(seq_len(i-1)), i]))
       kj[i] <- sqrt(1 - rj^(-1.31*log10(alpha)))
     }
   }
@@ -155,7 +155,7 @@ Keff.me <- function(sigma.matrix, alpha=0.05) {
 
 # Li & Ji method to estimate Meff & mej
 LiJi.me <- function(sigma.matrix) {
-  if (class(sigma.matrix) != "matrix") {
+  if (!is.matrix(sigma.matrix)) {
     stop("sigma.matrix argument should be a numeric matrix.")
   }
 
@@ -166,7 +166,7 @@ LiJi.me <- function(sigma.matrix) {
   res.vec=rep(NA,times=N)
   res.vec[1]=1
   for (i in 2:N){
-  	eig.val <- eigen(sigma.matrix[1:i,1:i])$values
+  	eig.val <- eigen(sigma.matrix[seq_len(i),seq_len(i)])$values
   	eig.val <- f(abs(eig.val))
 
 
@@ -182,7 +182,7 @@ LiJi.me <- function(sigma.matrix) {
 
 # Galwey method to estimate Meff & mej
 Galwey.me <- function(sigma.matrix) {
-  if (class(sigma.matrix) != "matrix") {
+  if (!is.matrix(sigma.matrix)) {
     stop("sigma.matrix argument should be a numeric matrix.")
   }
 
@@ -193,7 +193,7 @@ Galwey.me <- function(sigma.matrix) {
   res.vec=rep(NA,times=N)
   res.vec[1]=1
   for (i in 2:N){
-  	eig = eigen(sigma.matrix[1:i,1:i])$values
+  	eig = eigen(sigma.matrix[seq_len(i),seq_len(i)])$values
   	eig <- eig[which(eig >= 0)]
   	res.vec[i] <- sum(sqrt(eig))^2/sum(eig)
   }

@@ -11,9 +11,9 @@ PLSPM.test <- function(Y, G1, G2, n.perm=500){
 
   if(nlevels(as.factor(Y))!=2){
     stop("Y must be a factor with 2 levels, most likely 0 and 1.")
-  } else if(class(G1)!="SnpMatrix"){
+  } else if(!is(G1,"SnpMatrix")){
     stop("G1 must be a SnpMatrix object.")
-  } else if(class(G2)!="SnpMatrix"){
+  } else if(!is(G2,"SnpMatrix")){
     stop("G2 must be a SnpMatrix object")
   } else if(nrow(G1)!=nrow(G2)){
     stop("Both G1 and G2 must contain the same number of individuals.")
@@ -46,7 +46,7 @@ PLSPM.test <- function(Y, G1, G2, n.perm=500){
   XControls <- X[w0,]
 
   my.path <- rbind(Gene1,Gene2)
-  my.blocks <- list(1:ncol(X1),(ncol(X1)+1):(ncol(X1)+ncol(X2)))
+  my.blocks <- list(seq_len(ncol(X1)),(ncol(X1)+1):(ncol(X1)+ncol(X2)))
   my.modes = c("A", "A")
 
   mod1<-NULL;
@@ -78,7 +78,7 @@ PLSPM.test <- function(Y, G1, G2, n.perm=500){
   U <- (beta0-beta1)/sqrt(vbeta0+vbeta1)
   
   U.perm <- rep(NA,times=n.perm)
-  for (i in 1:n.perm){
+  for (i in seq_len(n.perm)){
     restart<-TRUE
     while(restart){
 	  	Y.perm <- sample(Y)

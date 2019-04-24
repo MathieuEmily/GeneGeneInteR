@@ -4,11 +4,14 @@ summary.GGInetwork <- function(object, ...){
 	cat("Gene-gene interaction network of ",ncol(object$p.value)," genes performed with:\n \t",object$method,"\n" )
 	
 	nn <- row.names(object$p.value)
-	pval.none <- unlist(sapply(1:(length(nn)-1),FUN=function(i){object$p.value[i,(i+1):ncol(object$p.value)]}))
+	pval.none <- unlist(sapply(seq_len(length(nn)-1),FUN=function(i){object$p.value[i,(i+1):ncol(object$p.value)]}))
+#	pval.none <- unlist(vapply(seq_len(length(nn)-1),FUN=function(i){object$p.value[i,(i+1):ncol(object$p.value)]},FUN.VALUE=0))
 
 	pval <- data.frame(
-	G1=unlist(sapply(1:(length(nn)-1),FUN=function(i){rep(nn[i],times=(length(nn)-i))})),
-	G2=unlist(sapply(1:(length(nn)-1),FUN=function(i){nn[(i+1):length(nn)]})
+	G1=unlist(sapply(seq_len(length(nn)-1),FUN=function(i){rep(nn[i],times=(length(nn)-i))})),
+#	G1=unlist(vapply(seq_len(length(nn)-1),FUN=function(i){rep(nn[i],times=(length(nn)-i))},FUN.VALUE=0)),
+	G2=unlist(sapply(seq_len(length(nn)-1),FUN=function(i){nn[(i+1):length(nn)]})
+#	G2=unlist(vapply(seq_len(length(nn)-1),FUN=function(i){nn[(i+1):length(nn)]},FUN.VALUE=0)
 ),
 	None=pval.none,
 	bonferroni=p.adjust(pval.none,method="bonferroni"),

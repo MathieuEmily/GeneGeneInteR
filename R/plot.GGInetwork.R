@@ -1,15 +1,13 @@
-plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col=c("#D6604D", "#104E8B"), colbar.width=0.15, title=NULL,  hclust.order=FALSE, use.log=FALSE, NA.col="#D3D3D3", draw.pvals=NULL, draw.names=NULL, interact=FALSE, method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), genes=1:ncol(x$p.value), plot.nointer=TRUE, ...){
-	if(class(x)!="GGInetwork") {
+plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col=c("#D6604D", "#104E8B"), colbar.width=0.15, title=NULL,  hclust.order=FALSE, use.log=FALSE, NA.col="#D3D3D3", draw.pvals=NULL, draw.names=NULL, interact=FALSE, method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), genes=seq_len(ncol(x$p.value)), plot.nointer=TRUE, ...){
+	if(!is(x,"GGInetwork")) {
 	    stop("x should be an object of class GGInetwork.")
 	}
 	method <- match.arg(method)
-	switch(method,
-			heatmap=GGI.plot(GGI=x$p.value, genes=genes, col=col, colbar.width=colbar.width, title=title, hclust.order=hclust.order, use.log=use.log, threshold=threshold, NA.col=NA.col, draw.pvals=draw.pvals, draw.names=draw.names, interact=interact, method.adjust=method.adjust),
-			network=draw.network(GGI=x$p.value, genes=genes, threshold=threshold, plot.nointer=plot.nointer))
+	switch(method,heatmap=GGI.plot(GGI=x$p.value, genes=genes, col=col, colbar.width=colbar.width, title=title, hclust.order=hclust.order, use.log=use.log, threshold=threshold, NA.col=NA.col, draw.pvals=draw.pvals, draw.names=draw.names, interact=interact, method.adjust=method.adjust),network=draw.network(GGI=x$p.value, genes=genes, threshold=threshold, plot.nointer=plot.nointer))
 }
 
 
-GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.width=0.15,
+GGI.plot <- function(GGI,genes=seq_len(ncol(GGI)),col=c("#D6604D", "#104E8B"), colbar.width=0.15,
                      title=NULL, hclust.order=FALSE, use.log=FALSE,
                      threshold=NULL, NA.col="#D3D3D3",
                      draw.pvals=NULL, draw.names=NULL,
@@ -43,7 +41,7 @@ GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.w
     stop("NA.col argument should be a character.")
   }
 
-  if(class(genes)=="character"&&any(!genes%in%colnames(GGI))){
+  if(is.character(genes) && any(!genes%in%colnames(GGI))){
     stop("Genes and GGI don't match. Please select genes that are named in GGI.")
   }
 
@@ -89,7 +87,7 @@ GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.w
 
   # Names checking (generated if none)
   if (is.null(dimnames(GGI))){
-    genes.names <- paste("Gene", 1:ncol(GGI), sep=".")
+    genes.names <- paste("Gene", seq_len(ncol(GGI)), sep=".")
     dimnames(GGI) <- list(genes.names, genes.names)
   }
 
@@ -153,7 +151,7 @@ GGI.plot <- function(GGI,genes=1:ncol(GGI),col=c("#D6604D", "#104E8B"), colbar.w
 
   	  # Check if coordinates are conformant with GGI matrix
   	  coords.check <- try(GGI[coords['row'], coords['col']], silent=TRUE)
-  	  if (class(coords.check) != 'try-error' && length(coords.check) == 1) {
+  	  if (!is(coords.check, 'try-error') && length(coords.check) == 1) {
   	    # Check if selected point is in upper triangle -diag excluded-
   	    # (onscreen part of the matrix).
   	    # It is the case when column index is strictly superior to
@@ -510,24 +508,25 @@ clear.tooltip <- function(inter.tip, prime.plot) {
 }
 
 
-draw.network <- function(GGI,genes=1:ncol(GGI),threshold=0.05,plot.nointer=TRUE,method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr")){
+draw.network <- function(GGI,genes=seq_len(ncol(GGI)),threshold=0.05,plot.nointer=TRUE,method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr")){
   if(length(genes)<2 || length(genes)>ncol(GGI)){
     stop("Number of genes selected not valid.")
-  } else if(!class(GGI)%in%c("data.frame","matrix")){
-    stop("GGI must be a data.frame.")
+#  } else if(!class(GGI)%in%c("data.frame","matrix")){
+  } else if(! (is(GGI,"data.frame") | is(GGI,"matrix"))){
+     stop("GGI must be a data.frame.")
   } else if(ncol(GGI)!=nrow(GGI)){
-    stop("GGI must be a sqared matrix, containing the pValues for each interaction between genes.")
-  } else if(!class(threshold)%in%c("numeric","integer","NULL")){
+    stop("GGI must be a squared matrix, containing the pValues for each interaction between genes.")
+  } else if(! (is(threshold,"numeric") | is(threshold,"integer") | is.null(threshold))){
     stop("Threshold must be a numeric.")
-  } else if(class(threshold)=="NULL"){
+  } else if(is.null(threshold)){
   	threshold<-0.05
   } else if(threshold>1 || threshold<0){
     stop("Threshold must be comprised in [0,1].")
-  } else if(class(plot.nointer)!="logical"){
+  } else if(!is(plot.nointer,"logical")){
     stop("plot.inter must be a boolean.")
   }
 
-  if(class(genes)=="character"&&any(!genes%in%colnames(GGI))){
+  if(is.character(genes)&&any(!genes%in%colnames(GGI))){
     stop("Genes and GGI don't match. Please select genes that are named in GGI.")
   }
 
@@ -548,7 +547,7 @@ draw.network <- function(GGI,genes=1:ncol(GGI),threshold=0.05,plot.nointer=TRUE,
   from.raw <- c()
   to.raw <- c()
 
-  for (i in 1:(dim-1)){
+  for (i in seq_len(dim-1)){
     from.raw <- c(from.raw, rep(colnames(GGI)[i], dim-i))
     to.raw <- c(to.raw, rownames(GGI)[(i+1):dim])
   }

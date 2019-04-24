@@ -1,6 +1,6 @@
 imputeSnpMatrix <- function(snpX, genes.info,
                             on.rem = c("SNP", "ind", "none"), quiet=FALSE){
-  if (class(snpX) != "SnpMatrix") {
+  if (!is(snpX,"SnpMatrix")) {
     stop("snpX argument should be SnpMatrix object.")
   } else if (!is.null(genes.info) && (!(is.data.frame(genes.info) | nrow(genes.info) > ncol(snpX)))) {
     stop("genes.info should be a data.frame with less rows than or as much as snpX columns.")
@@ -26,7 +26,7 @@ imputeSnpMatrix <- function(snpX, genes.info,
 
   imputed <- as(snpX, "numeric")
   if (!quiet){prog <- txtProgressBar(0, nrow(snpX), char="-", style = 3)}
-  for (i in 1:nrow(snpX)) {
+  for (i in seq_len(nrow(snpX))) {
 
     select <- which(is.na(snpX[i, ]))
 

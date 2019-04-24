@@ -7,15 +7,15 @@ GBIGM.test <- function(Y, G1, G2, n.perm = 1000){
     Y <- Y[, 1]
   }
 
-  if(class(n.perm)!="numeric"){
+  if(!is.numeric(n.perm)){
     stop("n.boot must be numeric.")
   } else if(n.perm<1){
     stop("n.boot must be strictly superior to 0.")
   } else if(nlevels(as.factor(Y))!=2){
     stop("Y must be a factor with 2 levels, most likely 0 and 1.")
-  } else if(class(G1)!="SnpMatrix"){
+  } else if(!is(G1,"SnpMatrix")){
     stop("G1 must be a SnpMatrix object.")
-  } else if(class(G2)!="SnpMatrix"){
+  } else if(!is(G2,"SnpMatrix")){
     stop("G2 must be a SnpMatrix object")
   } else if(nrow(G1)!=nrow(G2)){
     stop("Both G1 and G2 must contain the same number of individuals.")
@@ -59,11 +59,11 @@ GBIGM.test <- function(Y, G1, G2, n.perm = 1000){
 
   Delta1.2init<-InfoGainRat(Y,G1,G2,G1.2,HG1,HG2,HG1.2,ind34)
   D<-list()
-  for(i in 1:n.perm){
+  for(i in seq_len(n.perm)){
     D[[i]]<-sample(Y,n.ind)
   }
   Delta1.2<-rep(NA,n.perm)
-  Delta1.2<-lapply(1:n.perm,function(x){InfoGainRat(D[[x]],G1,G2,G1.2,HG1,HG2,HG1.2,ind34)})
+  Delta1.2<-lapply(seq_len(n.perm),function(x){InfoGainRat(D[[x]],G1,G2,G1.2,HG1,HG2,HG1.2,ind34)})
   pval<-sum(Delta1.2>=Delta1.2init)/n.perm
 	 stat <- Delta1.2init
 	names(stat)="DeltaR1,2"
@@ -97,7 +97,7 @@ base3to10 <- function(gene){
   n.SNP<-ncol(gene)
   long<-nrow(gene)
   tab<-matrix(NA,ncol=n.SNP,nrow=long)
-  for (i in 1:n.SNP){
+  for (i in seq_len(n.SNP)){
     tab[,i]<-3^(i-1)*gene[,i]
   }
   b10<-apply(tab,1,sum)

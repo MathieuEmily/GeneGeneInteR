@@ -9,9 +9,10 @@ minP.test <- function(Y, G1, G2){
 	  	## Searching for clusters in G1
   		distance.G1 <- snpStats::ld(G1, G1, stats='R.squared')
 	  	distance.G1 <- as.dist(1 - distance.G1)
-	  	clust.tree.G1 <- rioja::chclust(distance.G1)
-	  	k1 <- cutree(clust.tree.G1, k=1:(ncol(G1)-30))
-	  	max.G1 <- sapply(1:(ncol(G1)-30),FUN=function(i){return(max(table(as.factor(k1[,i]))))})
+	  	clust.tree.G1 <- chclust(distance.G1)
+	  	k1 <- cutree(clust.tree.G1, k=seq_len((ncol(G1)-30)))
+	  	#max.G1 <- sapply(seq_len(ncol(G1)-30),FUN=function(i){return(max(table(as.factor(k1[,i]))))})
+	  	max.G1 <- vapply(seq_len(ncol(G1)-30),FUN=function(i){return(max(table(as.factor(k1[,i]))))},FUN.VALUE=0)
 #	  	max.G1 <- max.G1[c(which(max.G1 > 20),which(max.G1 < 30)[1])]
 	  	id.max.G1 <- which(max.G1 <= 30)[1]
  
@@ -27,9 +28,10 @@ minP.test <- function(Y, G1, G2){
   	if (ncol(G2) >30){
   		distance.G2 <- snpStats::ld(G2, G2, stats='R.squared')
   		distance.G2 <- as.dist(1 - distance.G2)
-  		clust.tree.G2 <- rioja::chclust(distance.G2)
-  		k2 <- cutree(clust.tree.G2, k=1:(ncol(G2)-30))
-  		max.G2 <- sapply(1:(ncol(G2)-30),FUN=function(i){return(max(table(as.factor(k2[,i]))))})
+  		clust.tree.G2 <- chclust(distance.G2)
+  		k2 <- cutree(clust.tree.G2, k=seq_len(ncol(G2)-30))
+#  		max.G2 <- sapply(seq_len(ncol(G2)-30),FUN=function(i){return(max(table(as.factor(k2[,i]))))})
+  		max.G2 <- vapply(seq_len(ncol(G2)-30),FUN=function(i){return(max(table(as.factor(k2[,i]))))},FUN.VALUE=0)
 #  		max.G2 <- max.G2[c(which(max.G2 > 20),which(max.G2 < 30)[1])]
   		id.max.G2 <- which(max.G2 <= 30)[1]
 	} else {
@@ -48,11 +50,15 @@ minP.test <- function(Y, G1, G2){
 
 
 
-	boundaries.start.G1 <- c(1,1+as.numeric(which(sapply(1:(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))))
-	boundaries.end.G1 <- c(as.numeric(which(sapply(1:(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))),ncol(G1))
+#	boundaries.start.G1 <- c(1,1+as.numeric(which(sapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))))
+#	boundaries.end.G1 <- c(as.numeric(which(sapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))),ncol(G1))
+	boundaries.start.G1 <- c(1,1+as.numeric(which(vapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])},FUN.VALUE=0))))
+	boundaries.end.G1 <- c(as.numeric(which(vapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])},FUN.VALUE=0))),ncol(G1))
 
-	boundaries.start.G2 <- c(1,1+as.numeric(which(sapply(1:(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])}))))
-	boundaries.end.G2 <- c(as.numeric(which(sapply(1:(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])}))),ncol(G2))
+#	boundaries.start.G2 <- c(1,1+as.numeric(which(sapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])}))))
+#	boundaries.end.G2 <- c(as.numeric(which(sapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])}))),ncol(G2))
+	boundaries.start.G2 <- c(1,1+as.numeric(which(vapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])},FUN.VALUE=0))))
+	boundaries.end.G2 <- c(as.numeric(which(vapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])},FUN.VALUE=0))),ncol(G2))
 	} else{
 		boundaries.start.G1 <- c(1)
 		boundaries.start.G2 <- c(1)
@@ -72,7 +78,7 @@ minP.test <- function(Y, G1, G2){
   # All pairs are iterated over
   pairs.p.val <- rep(NA,times=nrow(sub.pairs))
   pairs.stat <- rep(NA,times=nrow(sub.pairs))
-  for (i in 1:(nrow(sub.pairs))){
+  for (i in seq_len(nrow(sub.pairs))){
     # Cluster boundaries for both genes
 	G1.boundary <- (sub.pairs$start.G1[i]):(sub.pairs$end.G1[i])
 	G2.boundary <- (sub.pairs$start.G2[i]):(sub.pairs$end.G2[i])
@@ -124,7 +130,7 @@ minP.test.2pairs <- function(Y, G1, G2){
 
   if (nlevels(as.factor(Y)) != 2) {
     stop("response variable should be binary. (2 modes).")
-  } else if (class(G1) != "SnpMatrix" | class(G2) != "SnpMatrix") {
+  } else if (!is(G1,"SnpMatrix") | !is(G2,"SnpMatrix")) {
     stop("G1 and G2 arguments should be SnpMatrix objects.")
   } else if (nrow(G1) != nrow(G2)) {
     stop("G1 and G2 should have same rows count.")
@@ -153,7 +159,7 @@ minP.test.2pairs <- function(Y, G1, G2){
 	n2 <- ncol(MatCor2)
 	n.pairs <- n1*n2
 	sigma.matrix <- matrix(NA,ncol=n.pairs,nrow=n.pairs)
-	for (i in 1:(n.pairs-1)){
+	for (i in seq_len(n.pairs-1)){
 		i1 <- floor((i-1)/n2)+1
 		j1 <- i-(i1-1)*n2
 		for (j in (i+1):n.pairs){

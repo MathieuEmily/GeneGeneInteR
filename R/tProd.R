@@ -9,7 +9,7 @@ tProd.test <- function(Y, G1, G2, tau = 0.05, n.sim = 1000){
 
   if (nlevels(as.factor(Y)) != 2) {
     stop("response variable should be binary. (2 modes).")
-  } else if (class(G1) != "SnpMatrix" | class(G2) != "SnpMatrix") {
+  } else if (!is(G1,"SnpMatrix") | !is(G2,"SnpMatrix")) {
     stop("G1 and G2 arguments should be SnpMatrix objects.")
   } else if (nrow(G1) != nrow(G2)) {
     stop("G1 and G2 should have same rows count.")
@@ -42,7 +42,7 @@ tProd.test <- function(Y, G1, G2, tau = 0.05, n.sim = 1000){
 	n2 <- ncol(MatCor2)
 	n.pairs <- n1*n2
 	sigma.matrix <- matrix(NA,ncol=n.pairs,nrow=n.pairs)
-	for (i in 1:(n.pairs-1)){
+	for (i in seq_len(n.pairs-1)){
 		i1 <- floor((i-1)/n2)+1
 		j1 <- i-(i1-1)*n2
 		for (j in (i+1):n.pairs){

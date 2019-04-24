@@ -1,6 +1,6 @@
 importFile <- function (file, pos, pos.sep="\t", ...) {
 
-  if(class(file)!="character"){
+  if(!is.character(file)){
     stop("Please, enter a valid path file for genotype data.")
   }
 
@@ -29,17 +29,17 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
 
   } else {stop("Please enter a valid pedfile, plink, vcf, or impute2 file.")}
 
-  if(class(imp)=="list"){
+  if(is.list(imp)){
     res[["snpX"]] <- imp$genotypes
 
-  } else if(class(imp)=="SnpMatrix"){
+  } else if(is(imp,"SnpMatrix")){
     res[["snpX"]] <- imp
   }
 
   if(!missing(pos)){
 
     if(length(pos)==1){
-      if(class(pos)=="character"){
+      if(is.character(pos)){
         infos <- read.csv(pos, sep=pos.sep, header=TRUE)
 
         chr <- infos[,names(infos)%in%c("Chromosome","Chr","chromosome","chr")]
@@ -60,7 +60,7 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
         stop("Pos argument needs to be either a numeric vector, a character vector or a path file.")
       }
     } else if(length(pos)==ncol(res[["snpX"]])){
-      if(class(pos)%in%c("numeric","integer")){
+      if(is.numeric(pos) | is.integer(pos)){
         snp <- names(pos)
         if(is.null(snp)){snp <- colnames(res[["snpX"]])}
         res[["genes.info"]] <- data.frame(Chromosome=rep(NA,length(pos)),
@@ -68,7 +68,7 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
                                     SNPnames=snp,
                                     Position=pos)
 
-      } else if(class(pos)=="character"){
+      } else if(is.character(pos)){
         snp <- names(pos)
         if(is.null(snp)){snp <- colnames(res[["snpX"]])}
 
@@ -85,13 +85,13 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
       stop("The number of SNPs must be the same in genotype data and position information.")
     }
   } else {
-    if(class(imp)=="list"){
+    if(is.list(imp)){
       chr <- imp$map[,names(imp$map)%in%c("Chromosome","Chr","chromosome","chr")]
       gene <- imp$map[,names(imp$map)%in%c("Gene","gene","genenames","Genenames","Gene.names","gene.names")]
       snp <- imp$map[,names(imp$map)%in%c("SNP","Snp","snp","SNPnames","Snpnames","snpnames","SNP.names","Snp.names","snp.names","snp.name","SNP.name","Snp.name","SNPname","Snpname","snpname")]
       posi <- imp$map[,names(imp$map)%in%c("Position","position","pos","Pos","V2")]
 
-      if(class(posi)=="character"){
+      if(is.character(posi)){
         liste <- data.table::tstrsplit(posi, split=":", fixed=TRUE)
         chr <- liste[[1]]
         posi <- liste[[2]]

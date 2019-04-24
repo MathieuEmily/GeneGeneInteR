@@ -1,21 +1,21 @@
 CCA.test <- function(Y, G1, G2, n.boot = 500){
 
-	Y.arg <- deparse(substitute(Y))
-	G1.arg <- deparse(substitute(G1))
-	G2.arg <- deparse(substitute(G2))
+    Y.arg <- deparse(substitute(Y))
+    G1.arg <- deparse(substitute(G1))
+    G2.arg <- deparse(substitute(G2))
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
   }
 
-  if(class(n.boot)!="numeric"){
+  if(!is.numeric(n.boot)){
     stop("n.boot must be numeric.")
   } else if(n.boot<1){
     stop("n.boot must be strictly superior to 0.")
   } else if(nlevels(as.factor(Y))!=2){
     stop("Y must be a factor with 2 levels, most likely 0 and 1.")
-  } else if(class(G1)!="SnpMatrix"){
+  } else if(!is(G1,"SnpMatrix")){
     stop("G1 must be a SnpMatrix object.")
-  } else if(class(G2)!="SnpMatrix"){
+  } else if(!is(G2,"SnpMatrix")){
     stop("G2 must be a SnpMatrix object")
   } else if(nrow(G1)!=nrow(G2)){
     stop("Both G1 and G2 must contain the same number of individuals.")
@@ -126,10 +126,12 @@ get.z <- function(X1,X2){
 
 estim.var.z <- function(X1,X2,n.boot=500){
   z.vec <- rep(NA,times=n.boot)
-  for (i in 1:n.boot){
+#  for (i in 1:n.boot){
+  for (i in seq_len(n.boot)){
     restart<-TRUE
     while(restart){
-      ind.boot <- sample(1:nrow(X1),nrow(X1),replace=TRUE)
+#      ind.boot <- sample(1:nrow(X1),nrow(X1),replace=TRUE)
+      ind.boot <- sample(seq_len(nrow(X1)),nrow(X1),replace=TRUE)
       X1.boot <- as.matrix(X1[ind.boot,])
       X2.boot <- as.matrix(X2[ind.boot,])
       z.vec[i] <- get.z(X1.boot,X2.boot)

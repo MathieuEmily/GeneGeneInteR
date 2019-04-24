@@ -9,7 +9,7 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
   # Arguments checks
   if (nlevels(as.factor(Y)) != 2) {
     stop("response variable should be binary. (2 modes).")
-  } else if (class(snpX) != "SnpMatrix") {
+  } else if (!is(snpX,"SnpMatrix")) {
     stop("snpX argument should be SnpMatrix object.")
   } else if (length(Y) != nrow(snpX)) {
     stop("Response variable should be conformant with genes matrix rows number.")
@@ -67,7 +67,7 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
   if (!is.null(genes.info)) {
     genes.names <- levels(genes.info$Genenames)
   } else if (!is.null(genes.length) && is.null(names(genes.length))){
-    genes.names <- paste("Gene", seq(1:length(genes.length)), sep=".")
+    genes.names <- paste("Gene", seq(seq_len(length(genes.length))), sep=".")
     names(genes.length) <- genes.names
   } else {
     genes.names <- names(genes.length)
@@ -80,13 +80,13 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
   if (!is.null(genes.info)) {
     gene.start <- NULL
     gene.end <- NULL
-    for (i in 1:nlevels(genes.info$Genenames)) {
+    for (i in seq_len(nlevels(genes.info$Genenames))) {
       gene <- genes.info[which(genes.info$Genenames %in% levels(genes.info$Genenames)[i]), ]
       gene.start <- c(gene.start, min(which(colnames(snpX) %in% gene$SNPnames), na.rm = TRUE))
       gene.end   <- c(gene.end, max(which(colnames(snpX) %in% gene$SNPnames), na.rm = TRUE))
     }
   } else {
-    gene.start <- c(0, cumsum(genes.length)[1:(length(genes.length) - 1)]) + 1
+    gene.start <- c(0, cumsum(genes.length)[seq_len(length(genes.length) - 1)]) + 1
     gene.end   <- cumsum(genes.length)
   }
 
@@ -112,7 +112,7 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
 	res.parameter <- NULL
 
   #Application of the method on the interactions
-  for (i in 1:ncol(interactions)) {
+  for (i in seq_len(ncol(interactions))) {
     print(paste("Interaction between", interactions[1, i], "&", interactions[2, i], "-",i,"/",ncol(interactions)))
 
     G1 <- snpX[, gene.start[interactions[1, i]]:gene.end[interactions[1, i]]]
