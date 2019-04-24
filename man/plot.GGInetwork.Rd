@@ -7,7 +7,7 @@ col=c("#D6604D","#104E8B"),colbar.width=0.15, title=NULL,hclust.order=FALSE,
 use.log=FALSE,NA.col="#D3D3D3",draw.pvals=NULL, 
 draw.names=NULL,interact=FALSE, 
 method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), 
-genes=1:ncol(x$p.value), plot.nointer=TRUE, \dots)
+genes=seq_len(ncol(x$p.value)), plot.nointer=TRUE, \dots)
 }
 \arguments{
 \item{x}{\code{GGInetwork}. Given as output of \code{\link{GGI}}.}
