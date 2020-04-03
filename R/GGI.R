@@ -5,9 +5,14 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
   }
-
+  if (is.character(Y)){
+    Y <- as.factor(Y)
+  }
+  
   # Arguments checks
-  if (nlevels(as.factor(Y)) != 2) {
+  if(!(class(Y) %in% c("numeric","factor","character","integer"))){
+    stop("response variable should be either a numeric, character, integer or factor vector")
+  } else if (nlevels(as.factor(Y)) != 2) {
     stop("response variable should be binary. (2 modes).")
   } else if (!is(snpX,"SnpMatrix")) {
     stop("snpX argument should be SnpMatrix object.")
