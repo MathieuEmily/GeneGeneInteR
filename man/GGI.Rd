@@ -6,7 +6,7 @@ GGI(Y, snpX, genes.length = NULL, genes.info = NULL, method = c("minP","PCA", "C
  "KCCA","CLD","PLSPM","GBIGM","GATES", "tTS", "tProd"), \dots)
 }
 \arguments{
-\item{Y}{numeric or factor vector with exactly two different values. \code{Y} is
+\item{Y}{numeric, integer, character or factor vector with exactly two different values.  \code{Y} is
 the response variable and should be of length equal to the number of rows of
 \code{snpX} (number of individuals).}
 
