@@ -4,6 +4,7 @@ The aim of this package is to propose several methods for testing gene-gene inte
 ## Installation
 To install and load the package in R
 
+
 ```ruby
 library(devtools)
 install_github("MathieuEmily/GeneGeneInteR")
