@@ -39,7 +39,7 @@ be in the same directory as the ".ped". Similarly, for a PLINK, there must be
 ".fam". A VCF file must be with the associated ".tbi" file.
 
 If the file is a vcf file, two additional arguments have to done : \itemize{\item
-\code{gr} instance of \code{\link[GenomicRanges]{GRanges}.} \item
+\code{gr} instance of GRanges.} \item
 \code{nmetacol} numeric defining the number of columns used in each record as
 locus-level metadata.}
 
