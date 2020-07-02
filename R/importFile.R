@@ -21,10 +21,7 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
   } else if (ext == ".bed") {
     imp <- snpStats::read.plink(bed = file, ...)
 
-  } else if (ext %in% c(".vcf", "f.gz")) {
-    imp <- GGtools::vcf2sm(tbxfi = Rsamtools::TabixFile(file), ...)
-
-  } else if (ext == ".impute2") {
+  }  else if (ext == ".impute2") {
     imp <- snpStats::read.impute(file, ...)
 
   } else {stop("Please enter a valid pedfile, plink, vcf, or impute2 file.")}
