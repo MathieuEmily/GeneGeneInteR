@@ -1,5 +1,5 @@
 # GeneGeneInteR
-The aim of this package is to propose several methods for testing gene-gene interaction in case-control association studies. Such a test can be done by aggregating SNP-SNP interaction tests performed at the SNP level (SSI) or by using gene-gene multidimensionnal methods (GGI) methods. The package also proposes tools for a graphic display of the results.
+The aim of this package is to propose several methods for testing gene-gene interaction in case-control association studies. Such a test can be done by aggregating SNP-SNP interaction tests performed at the SNP level (SSI) or by using gene-gene multi-dimensionnal methods (GGI) methods. The package also proposes tools for a graphic display of the results.
 
 ## Installation
 To install and load the package in R
