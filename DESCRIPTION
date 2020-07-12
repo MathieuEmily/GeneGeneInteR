@@ -7,4 +7,4 @@ License: GPL (>= 2)
 LazyData: TRUE
 Depends: R (>= 4.0)
 biocViews: GenomeWideAssociation, SNP, Genetics, GeneticVariability
-Imports: snpStats, mvtnorm, Rsamtools, igraph, kernlab, FactoMineR, IRanges, GenomicRanges, data.table,grDevices, graphics,stats, utils, methods
+Imports: snpStats, mvtnorm, Rsamtools, igraph, kernlab, FactoMineR, IRanges, GenomicRanges, data.table,grDevices, graphics,stats, utils, methods, GGtools
