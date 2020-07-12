@@ -39,7 +39,7 @@ be in the same directory as the ".ped". Similarly, for a PLINK, there must be
 ".fam". A VCF file must be with the associated ".tbi" file.
 
 If the file is a vcf file, two additional arguments have to done : \itemize{\item
-\code{gr} instance of \code{GRanges.} \item
+\code{gr} instance of \code{\link[GenomicRanges]{GRanges}.} \item
 \code{nmetacol} numeric defining the number of columns used in each record as
 locus-level metadata.}
 
@@ -63,5 +63,14 @@ posi <- system.file("extdata/example.txt", package="GeneGeneInteR")
 
 ## Importation
 data.imported <- importFile(file=ped, snps=info, pos=posi, pos.sep="\t")
+
+#########
+## VCF file from GGtools package.
+\dontrun{
+vref <- system.file("vcf/CEU.exon.2010_09.genotypes.vcf.gz", package="GGtools")
+irange <- IRanges::IRanges(10e6,20e6)
+gg = GenomicRanges::GRanges(seqnames="1", ranges=irange)
+dta <- importFile(file=vref, gr=gg, nmetacol=9L)
+}
 }
 
