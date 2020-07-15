@@ -17,7 +17,6 @@ importFrom(graphics,locator,rect,legend,segments,text,strwidth,plot,par,strheigh
 
 importFrom(igraph,graph_from_data_frame)
 importFrom(mvtnorm,rmvnorm,pmvnorm)
-importFrom(plspm,plspm)
 
 importFrom("methods", "as")
 importFrom("methods", "is")
