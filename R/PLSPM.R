@@ -4,7 +4,6 @@ PLSPM.test <- function(Y, G1, G2, n.perm=500){
 	G1.arg <- deparse(substitute(G1))
 	G2.arg <- deparse(substitute(G2))
 	
-
   if (!is.null(dim(Y))) {
     Y <- Y[, 1]
   }
