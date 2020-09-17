@@ -118,7 +118,7 @@ GGI <- function(Y, snpX, genes.length = NULL, genes.info = NULL,
 
   #Application of the method on the interactions
   for (i in seq_len(ncol(interactions))) {
-    print(paste("Interaction between", interactions[1, i], "&", interactions[2, i], "-",i,"/",ncol(interactions)))
+    #print(paste("Interaction between", interactions[1, i], "&", interactions[2, i], "-",i,"/",ncol(interactions)))
 
     G1 <- snpX[, gene.start[interactions[1, i]]:gene.end[interactions[1, i]]]
     G2 <- snpX[, gene.start[interactions[2, i]]:gene.end[interactions[2, i]]]

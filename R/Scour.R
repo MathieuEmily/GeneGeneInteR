@@ -12,14 +12,14 @@ snpMatrixScour <- function(snpX, genes.length = NULL, genes.info = NULL,
     stop("genes.info argument should have four columns.")
   } else if (!is.null(genes.info) && !all(names(genes.info) %in% c("Genenames", "SNPnames", "Position", "Chromosome"))) {
     stop("genes.info argument should have its columns named: Genenames, SNPnames, Position, Chromosome")
-  } else if (!is.null(genes.info) && is.character(genes.info$Genenames)) {
-    stop("gene.info argument's Gene.name column should be of class character.")
-  } else if (!is.null(genes.info) && is.character(genes.info$SNPnames)) {
-    stop("gene.info argument's SNP.name column should be of class character.")
-  } else if (!is.null(genes.info) && is.character(genes.info$Position)) {
+  } else if (!is.null(genes.info) && !is.factor(genes.info$Genenames)) {
+    stop("gene.info argument's Gene.name column should be of class factor.")
+  } else if (!is.null(genes.info) && !is.factor(genes.info$SNPnames)) {
+    stop("gene.info argument's SNP.name column should be of class factor.")
+  } else if (!is.null(genes.info) && !is.numeric(genes.info$Position)) {
     stop("gene.info argument's Position column should be of class character.")
-  } else if (!is.null(genes.info) && is.character(genes.info$Chromosome)) {
-    stop("gene.info argument's Chromosome column should be of class character.")
+  } else if (!is.null(genes.info) && !is.numeric(genes.info$Chromosome)) {
+    stop("gene.info argument's Chromosome column should be of class numeric.")
   } else if (!is.null(genes.info) && any(is.na(genes.info))) {
     stop("genes.info can't have missing values (NA).")
   } else if (!is.numeric(min.maf) || min.maf < 0 || min.maf > 0.5) {
@@ -106,7 +106,7 @@ snpMatrixScour <- function(snpX, genes.length = NULL, genes.info = NULL,
 
   new.snpX <- as(new.snpX, "SnpMatrix")
 
-  print("A list object has been returned with elements: snpX & genes.info")
+  message("A list object has been returned with elements: snpX & genes.info")
   return(list(snpX = new.snpX, genes.info = new.genes))
 }
 

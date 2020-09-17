@@ -856,7 +856,7 @@ test_manifest_scaling <- function(MV, scaling)
 {
   # to be used when MV is a data.frame containing factors
   if (is.data.frame(MV)) {
-    mvs_class = vapply(MV, class)
+    mvs_class = vapply(MV, class,FUN.value="character")
     mvs_as_factors <- mvs_class == "factor"
     # if there are MVs as factors, check right scaling
     if (sum(mvs_as_factors) > 0) {
@@ -961,7 +961,7 @@ test_factors <- function(DF)
   contains_factors = FALSE
   # to be used when DF is a data.frame containing factors
   if (is.data.frame(DF)) {
-    mvs_class = vapply(DF, class)
+    mvs_class = vapply(DF, class,FUN.VALUE="character")
     mvs_as_factors <- mvs_class == "factor"
     # tell me if there are MVs as factors
     if (sum(mvs_as_factors) > 0)
@@ -972,7 +972,7 @@ test_factors <- function(DF)
 
 get_numerics <- function(MV)
 {  
-  mvs_class = vapply(MV, class)
+  mvs_class = vapply(MV, class,FUN.VALUE="character")
   mvs_as_factors <- mvs_class == "factor"
   categorical = which(mvs_as_factors)
   categories = vector(mode="list", ncol(MV))
@@ -1126,9 +1126,9 @@ list_to_dummy <- function(alist)
 test_null_weights <- function(wgs, specs) 
 {
   if (is.null(wgs)) {
-    print(paste("Iterative process is non-convergent with 'maxiter'=", 
-                specs$maxiter, " and 'tol'=", specs$tol, sep=""))
-    message("Algorithm stops") 
+#    print(paste("Iterative process is non-convergent with 'maxiter'=", 
+ #               specs$maxiter, " and 'tol'=", specs$tol, sep=""))
+ #   message("Algorithm stops") 
     stop("")
   }
   TRUE
@@ -1249,7 +1249,7 @@ get_unidim <- function(DM, blocks, modes)
   obs = nrow(DM)
   sdvf = sqrt((nrow(DM)-1) / nrow(DM)) 
   # missing data flags
-  missing_data = vapply(DM, is_missing)
+  missing_data = vapply(DM, is_missing,FUN.VALUE=FALSE)
   
   # Unidimensionality
   Alpha = rep(1, lvs)    # Cronbach's Alpha for each block
@@ -1505,7 +1505,7 @@ get_weights_nonmetric <-
     # list for quantification of blocks' variables
     QQ = Xblocks
     # missing data flags
-    missing_data = vapply(Xblocks, is_missing)
+    missing_data = vapply(Xblocks, is_missing,FUN.VALUE=FALSE)
     # initialize list with availibility indicators (to handle NAs)
     X_avail = vector("list", lvs)
     # outer design matrix 'ODM' and matrix of outer weights 'W'
@@ -2239,12 +2239,12 @@ get_boots <-
     # Outer weights
     WB = get_boot_stats(WEIGS, wgs.orig)
     #rownames(WB) = mvs.names
-    rownames(WB) <- paste(rep(lvs.names, vapply(blocks, length)), 
+    rownames(WB) <- paste(rep(lvs.names, vapply(blocks, length,FUN.VALUE=0)), 
                           mvs.names, sep='-')
     # Loadings
     LB = get_boot_stats(LOADS, loads.orig)
     #rownames(LB) = mvs.names
-    rownames(LB) <- paste(rep(lvs.names, vapply(blocks, length)), 
+    rownames(LB) <- paste(rep(lvs.names, vapply(blocks, length,FUN.VALUE=0)), 
                           mvs.names, sep='-')
     # Path coefficients
     colnames(PATHS) = path.labs

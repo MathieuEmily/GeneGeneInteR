@@ -52,13 +52,13 @@ minP.test <- function(Y, G1, G2){
 
 #	boundaries.start.G1 <- c(1,1+as.numeric(which(sapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))))
 #	boundaries.end.G1 <- c(as.numeric(which(sapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])}))),ncol(G1))
-	boundaries.start.G1 <- c(1,1+as.numeric(which(vapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])},FUN.VALUE=0))))
-	boundaries.end.G1 <- c(as.numeric(which(vapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])},FUN.VALUE=0))),ncol(G1))
+	boundaries.start.G1 <- c(1,1+as.numeric(which(vapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])},FUN.VALUE=TRUE))))
+	boundaries.end.G1 <- c(as.numeric(which(vapply(seq_len(length(k1[,division[1]])-1),FUN=function(i){return(k1[,division[1]][i]!=k1[,division[1]][i+1])},FUN.VALUE=TRUE))),ncol(G1))
 
 #	boundaries.start.G2 <- c(1,1+as.numeric(which(sapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])}))))
 #	boundaries.end.G2 <- c(as.numeric(which(sapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])}))),ncol(G2))
-	boundaries.start.G2 <- c(1,1+as.numeric(which(vapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])},FUN.VALUE=0))))
-	boundaries.end.G2 <- c(as.numeric(which(vapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])},FUN.VALUE=0))),ncol(G2))
+	boundaries.start.G2 <- c(1,1+as.numeric(which(vapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])},FUN.VALUE=TRUE))))
+	boundaries.end.G2 <- c(as.numeric(which(vapply(seq_len(length(k2[,division[2]])-1),FUN=function(i){return(k2[,division[2]][i]!=k2[,division[2]][i+1])},FUN.VALUE=TRUE))),ncol(G2))
 	} else{
 		boundaries.start.G1 <- c(1)
 		boundaries.start.G2 <- c(1)

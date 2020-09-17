@@ -1,4 +1,4 @@
-plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col=c("#D6604D", "#104E8B"), colbar.width=0.15, title=NULL,  hclust.order=FALSE, use.log=FALSE, NA.col="#D3D3D3", draw.pvals=NULL, draw.names=NULL, interact=FALSE, method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), genes=seq_len(ncol(x$p.value)), plot.nointer=TRUE, ...){
+plot.GGInetwork <- function(x,method=c("heatmap","network"), threshold=NULL, col=c("#D6604D", "#104E8B"), colbar.width=0.15, title=NULL,  hclust.order=FALSE, use.log=FALSE, NA.col="#D3D3D3", draw.pvals=NULL, draw.names=NULL, interact=FALSE, method.adjust=c("none","holm","hochberg","hommel","Bonferroni","BH","BY","fdr"), genes=seq_len(ncol(x$p.value)), plot.nointer=TRUE, ...){
 	if(!is(x,"GGInetwork")) {
 	    stop("x should be an object of class GGInetwork.")
 	}
@@ -11,7 +11,7 @@ GGI.plot <- function(GGI,genes=seq_len(ncol(GGI)),col=c("#D6604D", "#104E8B"), c
                      title=NULL, hclust.order=FALSE, use.log=FALSE,
                      threshold=NULL, NA.col="#D3D3D3",
                      draw.pvals=NULL, draw.names=NULL,
-                     interact=!(draw.pvals && draw.names),method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr")) {
+                     interact=!(draw.pvals && draw.names),method.adjust=c("none","holm","hochberg","hommel","Bonferroni","BH","BY","fdr")) {
 
   if(!is.matrix(GGI) && !is.numeric(GGI[1, 1])) {
     stop("GGI argument should be a numeric matrix.")
@@ -508,7 +508,7 @@ clear.tooltip <- function(inter.tip, prime.plot) {
 }
 
 
-draw.network <- function(GGI,genes=seq_len(ncol(GGI)),threshold=0.05,plot.nointer=TRUE,method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr")){
+draw.network <- function(GGI,genes=seq_len(ncol(GGI)),threshold=0.05,plot.nointer=TRUE,method.adjust=c("none","holm","hochberg","hommel","Bonferroni","BH","BY","fdr")){
   if(length(genes)<2 || length(genes)>ncol(GGI)){
     stop("Number of genes selected not valid.")
 #  } else if(!class(GGI)%in%c("data.frame","matrix")){

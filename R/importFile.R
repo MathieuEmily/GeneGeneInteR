@@ -120,6 +120,7 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
   }
 
   if(any(colnames(res[["snpX"]])!=res[["genes.info"]][,"SNPnames"])){warning("Be careful, the SNP names don't match between snpMatrix and info dataframe.")}
-
+  res$genes.info$Genenames <- as.factor(res$genes.info$Genenames)
+  res$genes.info$SNPnames <- as.factor(res$genes.info$SNPnames)
   return(res)
 }

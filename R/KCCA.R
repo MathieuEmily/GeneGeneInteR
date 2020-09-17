@@ -80,7 +80,7 @@ names(parameters) <- "n.boot"
 	res <- list(
 		null.value=null.value,
 		alternative="two.sided",
-		method="Gene-based interaction based on Kernel Canonical Correspondance Analysis",
+		method="Gene-based interaction based on Kernel Canonical Correspondence Analysis",
 		estimate= estimate,
 		data.name=paste(Y.arg," and  (",G1.arg," , ",G2.arg,")",sep=""),
 		statistic=stat,

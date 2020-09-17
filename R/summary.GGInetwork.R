@@ -34,11 +34,11 @@ summary.GGInetwork <- function(object, ...){
 		tmp.df <- pval[w,c(1,2,4)]
 		tmp.df <- tmp.df[order(tmp.df[,3]),]
 		row.names(tmp.df) <- NULL
-		names(tmp.df) <- c("Gene1","Gene2","bonferroni p-value")
-		cat("\nSignificant interaction with a bonferroni correction at the level of 0.05 \n-------\n")
+		names(tmp.df) <- c("Gene1","Gene2","Bonferroni p-value")
+		cat("\nSignificant interaction with a Bonferroni correction at the level of 0.05 \n-------\n")
 		print(tmp.df)
 	} else {
-		cat("\nNo significant interaction (at the level of 0.05) with a bonferroni correction\n")
+		cat("\nNo significant interaction (at the level of 0.05) with a Bonferroni correction\n")
 	}
 	w <- which(pval$BH < 0.05)
 	if (length(w) > 0){
