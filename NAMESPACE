@@ -1,3 +1,5 @@
+useDynLib(GeneGeneInteR)
+
 export(CCA.test,CLD.test,GBIGM.test,GGI,importFile,KCCA.test,PCA.test,PLSPM.test,gates.test,imputeSnpMatrix)
 export(minP.test,selectSnps,snpMatrixScour,tProd.test,tTS.test)
 
@@ -14,9 +16,8 @@ importFrom(stats,pnorm,cov,hclust,as.dist,pchisq,qnorm,integrate,glm,anova,as.fo
 importFrom(utils,combn,read.csv,txtProgressBar,setTxtProgressBar,capture.output)
 importFrom(grDevices,recordPlot,replayPlot)
 importFrom(graphics,locator,rect,legend,segments,text,strwidth,plot,par,strheight)
-importFrom(stats,lm,cor,sd,princomp,na.omit)
 
-importFrom(igraph,graph_from_data_frame,normalize)
+importFrom(igraph,graph_from_data_frame)
 importFrom(mvtnorm,rmvnorm,pmvnorm)
 
 importFrom("methods", "as")
