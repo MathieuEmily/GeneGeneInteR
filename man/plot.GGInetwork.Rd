@@ -6,7 +6,7 @@
 col=c("#D6604D","#104E8B"),colbar.width=0.15, title=NULL,hclust.order=FALSE, 
 use.log=FALSE,NA.col="#D3D3D3",draw.pvals=NULL, 
 draw.names=NULL,interact=FALSE, 
-method.adjust=c("none","holm","hochberg","hommel","bonferroni","BH","BY","fdr"), 
+method.adjust=c("none","holm","hochberg","hommel","Bonferroni","BH","BY","fdr"), 
 genes=seq_len(ncol(x$p.value)), plot.nointer=TRUE, \dots)
 }
 \arguments{
