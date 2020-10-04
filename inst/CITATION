@@ -1,0 +1,21 @@
+bibentry(bibtype = "Article",
+  title        = "Gene-Based Methods to Detect Gene-Gene Interaction in {R}: The {GeneGeneInteR} Package",
+  author       = c(person(given = "Mathieu",
+                          family = "Emily",
+                          email = "Mathieu.Emily@agrocampus-ouest.fr"),
+                   person(given = "Nicolas",
+                          family = "Sounac"),
+                   person(given = "Florian",
+                          family = "Kroell"),
+                   person(given = "Magalie",
+                          family = "Hou\\'ee-Bigot")),
+  journal      = "Journal of Statistical Software",
+  year         = "2020",
+  volume       = "95",
+  number       = "12",
+  pages        = "1--32",
+  doi          = "10.18637/jss.v095.i12",
+
+  header       = "To cite GeneGeneInteR in publications use:"
+)
+
