@@ -1,7 +1,7 @@
 Package: GeneGeneInteR
 Type: Package
 Title: Tools for Testing Gene-Gene Interaction at the Gene Level
-Version: 1.17
+Version: 1.17.0
 Description: The aim of this package is to propose several methods for testing gene-gene interaction in case-control association studies. Such a test can be done by aggregating SNP-SNP interaction tests performed at the SNP level (SSI) or by using gene-gene multidimensionnal methods (GGI) methods. The package also proposes tools for a graphic display of the results. <doi:10.18637/jss.v095.i12>.Authors@R: c(person("Mathieu","Emily", email="mathieu.emily@agrocampus-ouest.fr",role=c("aut","cre")),person("Nicolas","Sounac",email="nsounac@agrocamspus-ouest.fr",role=c("ctb")),person("Florian","Kroell",email="florian.kroell@agrocampus-ouest.fr",role=c("ctb")),person("Magalie","Houee-Bigot",email="magalie.houee@agrocampus-ouest.fr",role=c("aut")))
 License: GPL (>= 2)
 LazyData: TRUE
