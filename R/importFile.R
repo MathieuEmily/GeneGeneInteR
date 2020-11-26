@@ -21,8 +21,8 @@ importFile <- function (file, pos, pos.sep="\t", ...) {
   } else if (ext == ".bed") {
     imp <- snpStats::read.plink(bed = file, ...)
 
-  } else if (ext %in% c(".vcf", "f.gz")) {
-    imp <- GGtools::vcf2sm(tbxfi = Rsamtools::TabixFile(file), ...)
+  #} else if (ext %in% c(".vcf", "f.gz")) {
+    #imp <- GGtools::vcf2sm(tbxfi = Rsamtools::TabixFile(file), ...)
 
   } else if (ext == ".impute2") {
     imp <- snpStats::read.impute(file, ...)

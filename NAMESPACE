@@ -10,7 +10,7 @@ importFrom(kernlab,rbfdot,kcca,polydot,tanhdot,vanilladot,laplacedot,besseldot,a
 importFrom(snpStats,read.pedfile,read.plink,read.impute,ld,col.summary,snp.pre.multiply,snp.post.multiply,impute.snps,snp.imputation)
 importFrom(Rsamtools,TabixFile)
 importFrom(FactoMineR,PCA)
-importFrom(GGtools,vcf2sm)
+#importFrom(GGtools,vcf2sm)
 importFrom(data.table,tstrsplit)
 importFrom(stats,pnorm,cov,hclust,as.dist,pchisq,qnorm,integrate,glm,anova,as.formula,quantile,var,cutree,cancor,p.adjust)
 importFrom(utils,combn,read.csv,txtProgressBar,setTxtProgressBar,capture.output)
